@@ -12,6 +12,7 @@ namespace Argon;
 /// </summary>
 public class Argon
 {
+    [STAThread]
     public static void Main() 
     {
         // Create the Application
