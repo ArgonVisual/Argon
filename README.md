@@ -1,3 +1,3 @@
 # Argon
 
-Argon is a software that visualizes code (like UnrealEngine blueprint).
+Argon is a software that visualizes code.
