@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using Argon.FileTypes;
 using Argon.Helpers;
 
 namespace Argon.Widgets;
@@ -11,12 +13,23 @@ namespace Argon.Widgets;
 public class SolutionEditor : Border
 {
     /// <summary>
+    /// The <see cref="ArgSolution"/> that this widget is editing.
+    /// </summary>
+    public ArgSolution Solution { get; }
+
+    /// <summary>
     /// Initializes a new instance of 
     /// </summary>
     /// <param name="solution"></param>
-    public SolutionEditor(ArgonSolution solution) 
+    public SolutionEditor(ArgSolution solution) 
     {
+        Solution = solution;
+
         Background = GlobalStyle.Background;
+
+        Grid mainGrid = new Grid();
+
+        mainGrid.AddRowAuto(GenerateMenu());
 
         Grid horizontalPanel = new Grid() 
         {
@@ -24,7 +37,7 @@ public class SolutionEditor : Border
         };
 
         Grid projectsTree = new Grid();
-        projectsTree.AddRowAuto(new ArgonTextBlock() 
+        projectsTree.AddRowAuto(new ArgTextBlock() 
         {
             Text = solution.Name,
             FontSize = 40,
@@ -32,11 +45,41 @@ public class SolutionEditor : Border
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center
         });
-        projectsTree.AddRowFill(new SolutionDirectoryManager());
+        projectsTree.AddRowFill(new SolutionDirectoryManager(this));
 
         horizontalPanel.AddColumnPixel(300, projectsTree);
 
-        Child = horizontalPanel;
+        mainGrid.AddRowFill(horizontalPanel);
+
+        Child = mainGrid;
+    }
+
+    private Menu GenerateMenu() 
+    {
+        Menu menu = new Menu();
+
+        menu.Items.Add(GenerateFileMenuItem());
+
+        return menu;
+    }
+
+    private MenuItem GenerateFileMenuItem() 
+    {
+        MenuItem fileItem = new MenuItem()
+        {
+            Header = "File",
+        };
+
+        MenuItem saveAllItem = new MenuItem()
+        {
+            Header = "Save All",
+            Icon = null,
+            IsCheckable = false,
+        };
+        fileItem.Click += (sender, args) => Argon.SaveAllItems();
+        fileItem.Items.Add(saveAllItem);
+
+        return fileItem;
     }
 
     /// <summary>
@@ -44,7 +87,7 @@ public class SolutionEditor : Border
     /// </summary>
     /// <param name="solution">The solution that should be edited.</param>
     /// <returns>The new window.</returns>
-    public static Window CreateWindow(ArgonSolution solution) 
+    public static Window CreateWindow(ArgSolution solution) 
     {
         Window newWindow = new Window()
         {

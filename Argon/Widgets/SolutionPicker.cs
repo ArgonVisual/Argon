@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using Argon.FileTypes;
 using Argon.Helpers;
 using Microsoft.Win32;
 
@@ -38,7 +39,7 @@ public class SolutionPicker : ContentControl
 
         Grid mainGrid = new Grid();
 
-        mainGrid.AddRowAuto(new ArgonTextBlock()
+        mainGrid.AddRowAuto(new ArgTextBlock()
         {
 
         });
@@ -59,7 +60,7 @@ public class SolutionPicker : ContentControl
         if (dialog.ShowDialog() ?? false)
         {
             string solutionFilename = dialog.FileName;
-            ArgonSolution.ReadSolution(solutionFilename).CreateSolutionEditorWindow().Show();
+            ArgSolution.ReadSolution(solutionFilename).CreateSolutionEditorWindow().Show();
             Argon.CloseSolutionPickerWindow();
         }
     }
@@ -73,7 +74,7 @@ public class SolutionPicker : ContentControl
 
         if (saveDialog.ShowDialog() ?? false)
         {
-            ArgonSolution.CreateAndSaveBlank(Path.ChangeExtension(saveDialog.FileName, FileExtensions.Solution)).CreateSolutionEditorWindow().Show();
+            ArgSolution.CreateAndSaveBlank(Path.ChangeExtension(saveDialog.FileName, FileExtensions.Solution)).CreateSolutionEditorWindow().Show();
             Argon.CloseSolutionPickerWindow();
         }
     }

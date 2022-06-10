@@ -9,7 +9,7 @@ namespace Argon.Widgets;
 /// <summary>
 /// Argon Button
 /// </summary>
-public class ArgonButton : Border
+public class ArgButton : Border
 {
     /// <summary>
     /// Gets called when the button is clicked
@@ -17,9 +17,9 @@ public class ArgonButton : Border
     public Action? Click { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of <see cref="ArgonButton"/>.
+    /// Initializes a new instance of <see cref="ArgButton"/>.
     /// </summary>
-    public ArgonButton() 
+    public ArgButton() 
     {
         BorderBrush = null;
         BorderThickness = new Thickness();

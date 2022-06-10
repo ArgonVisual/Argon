@@ -8,12 +8,14 @@ namespace Argon;
 /// </summary>
 public static class GlobalStyle 
 {
-    /// <summary>
-    /// The default brush for text
-    /// </summary>
+    public const double FontSizeLarge = 28;
+    public const double FontSizeNormal = 20;
+    public const double FontSizeSmall = 15;
+
     public static Brush Text { get; } = NewSolidBrush(200, 200, 200);
 
-    public static Brush Background { get; } = NewSolidBrush(33, 33, 33);
+    public static Brush BackgroundDark { get; } = NewSolidBrush(20, 20, 20);
+    public static Brush Background { get; } = NewSolidBrush(28, 28, 28);
     public static Brush Border { get; } = NewSolidBrush(60, 60, 60);
 
     public static Brush ButtonNormal { get; } = NewSolidBrush(50, 50, 50);
