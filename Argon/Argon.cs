@@ -1,48 +1,90 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Argon.Helpers;
+using Argon.Widgets;
 
 namespace Argon;
 
 /// <summary>
-/// Contains the main function to startup the app
+/// Contains the main function to startup and manage the lifetime of the app.
 /// </summary>
 public class Argon
 {
+    /// <summary>
+    /// The window that is used for creating and opening an Argon solution.
+    /// </summary>
+    public static Window? SolutionPickerWindow { get; set; }
+
     [STAThread]
-    public static void Main() 
+    public static void Main(string[] args) 
     {
+        if (Debugger.IsAttached)
+        {
+            // Do not wrap in a tru-catch block so any errors that happen will be
+            // sent straigth to the debugger to catch and show
+            GuardedMain(args.Length > 0 ? args[0] : null);
+        }
+        else
+        {
+            try
+            {
+                GuardedMain(args.Length > 0 ? args[0] : null);
+            }
+            catch (Exception e)
+            {
+                // Show the error in a message box
+                MessageBox.Show(e.ToString());
+            }
+        }
+    }
+
+    private static void GuardedMain(string? commandLine) 
+    {
+#if DEBUG
+        // Set the commandline to this project for debugging
+        commandLine = $@"C:\Users\{Environment.UserName}\Desktop\UnrealArgon\UnrealEngine.argsln";
+#endif
+
         // Create the Application
         Application app = new Application();
-        // The main window for the app
-        Window mainWindow = CreateOpenOrCreateProject();
+
+        Window mainWindow;
+
+        // Check if the first argument contains
+        // the filename of a solution to open
+        if (commandLine is not null)
+        {
+            // Create window for editing the solution
+            string filename = commandLine;
+            mainWindow = SolutionEditor.CreateWindow(ArgonSolution.ReadSolution(filename));
+        }
+        else
+        {
+            // Create the solution picker
+            // From here the user can either create a new solution
+            // or open an existin one
+            mainWindow = SolutionPicker.CreateWindow();
+        }
+
         // Start the main loop and show the window
         app.Run(mainWindow);
     }
 
     /// <summary>
-    /// Creates a window for editing a solution.
+    /// Closes the solution picker window if it is valid.
     /// </summary>
-    /// <param name="solution">The solution that this window should be editing.</param>
-    /// <returns>The created window.</returns>
-    public static Window CreateEditorWindow(ArgonSolution solution) 
+    public static void CloseSolutionPickerWindow() 
     {
-        Window newWindow = new Window();
-
-        return newWindow;
-    }
-
-    /// <summary>
-    /// Creates a window that lets the user choose from an existing project or create a new one from a template.
-    /// </summary>
-    /// <returns>The created window.</returns>
-    public static Window CreateOpenOrCreateProject() 
-    {
-        Window newWindow = new Window();
-
-        return newWindow;
+        if (SolutionPickerWindow is not null)
+        {
+            SolutionPickerWindow.Close();
+            SolutionPickerWindow = null;
+        }
     }
 }
