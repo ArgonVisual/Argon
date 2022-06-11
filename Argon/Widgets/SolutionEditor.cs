@@ -13,15 +13,15 @@ namespace Argon.Widgets;
 public class SolutionEditor : Border
 {
     /// <summary>
-    /// The <see cref="ArgSolution"/> that this widget is editing.
+    /// The <see cref="ArgonSolution"/> that this widget is editing.
     /// </summary>
-    public ArgSolution Solution { get; }
+    public ArgonSolution Solution { get; }
 
     /// <summary>
     /// Initializes a new instance of 
     /// </summary>
     /// <param name="solution"></param>
-    public SolutionEditor(ArgSolution solution) 
+    public SolutionEditor(ArgonSolution solution) 
     {
         Solution = solution;
 
@@ -87,7 +87,7 @@ public class SolutionEditor : Border
     /// </summary>
     /// <param name="solution">The solution that should be edited.</param>
     /// <returns>The new window.</returns>
-    public static Window CreateWindow(ArgSolution solution) 
+    public static Window CreateWindow(ArgonSolution solution) 
     {
         Window newWindow = new Window()
         {

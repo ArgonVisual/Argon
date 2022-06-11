@@ -74,7 +74,7 @@ public class Argon
         {
             // Create window for editing the solution
             string filename = commandLine;
-            mainWindow = SolutionEditor.CreateWindow(ArgSolution.ReadSolution(filename));
+            mainWindow = SolutionEditor.CreateWindow(ArgonSolution.ReadSolution(filename));
         }
         else
         {

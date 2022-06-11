@@ -16,7 +16,7 @@ public class ProjectCreator : Border
     /// <summary>
     /// This gets called when the new project has been created.
     /// </summary>
-    public Action<ArgProject> Completed { get; }
+    public Action<ArgonProject> Completed { get; }
 
     /// <summary>
     /// The directory to save the project to.
@@ -29,7 +29,7 @@ public class ProjectCreator : Border
     /// Initializes a new instance of <see cref="ProjectCreator"/>.
     /// </summary>
     /// <param name="saveDirectory">If a project is created, then this is the directory to save the project.</param>
-    public ProjectCreator(string saveDirectory, Action<ArgProject> completedCallback)
+    public ProjectCreator(string saveDirectory, Action<ArgonProject> completedCallback)
     {
         _saveDirectory = saveDirectory;
         Completed = completedCallback;
@@ -100,7 +100,7 @@ public class ProjectCreator : Border
 
     private void CreateBlankProject()
     {
-        ArgProject blankProject = ArgProject.CreateAndSaveBlank(_saveDirectory, _projectNameText.Text);
+        ArgonProject blankProject = ArgonProject.CreateAndSaveBlank(_saveDirectory, _projectNameText.Text);
         Completed(blankProject);
         CloseProjectCreatorWindow();
     }
@@ -109,7 +109,7 @@ public class ProjectCreator : Border
     /// Creates a new window containing <see cref="ProjectCreator"/>.
     /// </summary>
     /// <returns>The new window.</returns>
-    public static Window CreateWindow(string saveDirectory, Action<ArgProject> completedCallback) 
+    public static Window CreateWindow(string saveDirectory, Action<ArgonProject> completedCallback) 
     {
         Window newWindow = new Window() 
         {

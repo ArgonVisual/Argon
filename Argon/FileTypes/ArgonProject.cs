@@ -6,7 +6,7 @@ namespace Argon.FileTypes;
 /// <summary>
 /// Represents a project that can be compiled.
 /// </summary>
-public class ArgProject : IFileHandle
+public class ArgonProject : IFileHandle
 {
     /// <summary>
     /// The serialization version for the binary format
@@ -35,10 +35,10 @@ public class ArgProject : IFileHandle
     public string Directory { get; }
 
     /// <summary>
-    /// Initializes a new instance of <see cref="ArgProject"/>.
+    /// Initializes a new instance of <see cref="ArgonProject"/>.
     /// </summary>
     /// <param name="filename">The path on disk to where this project should be located.</param>
-    public ArgProject(string filename)
+    public ArgonProject(string filename)
     {
         (Directory, Name) = filename.GetDirectoryAndName();
     }
@@ -61,10 +61,10 @@ public class ArgProject : IFileHandle
     /// Reads a project file
     /// </summary>
     /// <param name="filename">The name of the project file to read.</param>
-    /// <returns>New instance of <see cref="ArgProject"/> containing the read information.</returns>
-    public static ArgProject ReadProject(string filename)
+    /// <returns>New instance of <see cref="ArgonProject"/> containing the read information.</returns>
+    public static ArgonProject ReadProject(string filename)
     {
-        ArgProject solution = new ArgProject(filename);
+        ArgonProject solution = new ArgonProject(filename);
 
         using FileStream fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read);
         using BinaryReader reader = new BinaryReader(fileStream);
@@ -77,15 +77,15 @@ public class ArgProject : IFileHandle
     }
 
     /// <summary>
-    /// Creaes a new blank <see cref="ArgProject"/> and saves it to <paramref name="filename"/>.
+    /// Creaes a new blank <see cref="ArgonProject"/> and saves it to <paramref name="filename"/>.
     /// </summary>
     /// <param name="filename">The location on disk of this project (extension is not needed)</param>
     /// <returns>The new project.h</returns>
-    public static ArgProject CreateAndSaveBlank(string directory, string name)
+    public static ArgonProject CreateAndSaveBlank(string directory, string name)
     {
         string newDirectoryPath = Path.Combine(directory, name);
         System.IO.Directory.CreateDirectory(newDirectoryPath);
-        ArgProject newProject = new ArgProject(Path.Combine(newDirectoryPath, name));
+        ArgonProject newProject = new ArgonProject(Path.Combine(newDirectoryPath, name));
         newProject.Save();
         return newProject;
     }

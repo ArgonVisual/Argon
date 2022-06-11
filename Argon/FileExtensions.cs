@@ -8,12 +8,12 @@ namespace Argon;
 public static class FileExtensions 
 {
     /// <summary>
-    /// The file extension for a <see cref="ArgSolution"/>.
+    /// The file extension for a <see cref="ArgonSolution"/>.
     /// </summary>
     public const string Solution = ".argsln";
 
     /// <summary>
-    /// The file extension for a <see cref="ArgProject"/>.
+    /// The file extension for a <see cref="ArgonProject"/>.
     /// </summary>
     public const string Project = ".argproj";
 }

@@ -6,7 +6,7 @@ namespace Argon.FileTypes;
 /// <summary>
 /// Represents a file in memory that contains code.
 /// </summary>
-public class ArgCodeFile // : ISaveable
+public class ArgonCodeFile // : ISaveable
 {
     /// <summary>
     /// The full name of the project on disk.
@@ -23,7 +23,7 @@ public class ArgCodeFile // : ISaveable
     /// </summary>
     public string Directory { get; }
 
-    public ArgCodeFile(string filename)
+    public ArgonCodeFile(string filename)
     {
         (Directory, Name) = filename.GetDirectoryAndName();
     }

@@ -60,7 +60,7 @@ public class SolutionPicker : ContentControl
         if (dialog.ShowDialog() ?? false)
         {
             string solutionFilename = dialog.FileName;
-            ArgSolution.ReadSolution(solutionFilename).CreateSolutionEditorWindow().Show();
+            ArgonSolution.ReadSolution(solutionFilename).CreateSolutionEditorWindow().Show();
             Argon.CloseSolutionPickerWindow();
         }
     }
@@ -74,7 +74,7 @@ public class SolutionPicker : ContentControl
 
         if (saveDialog.ShowDialog() ?? false)
         {
-            ArgSolution.CreateAndSaveBlank(Path.ChangeExtension(saveDialog.FileName, FileExtensions.Solution)).CreateSolutionEditorWindow().Show();
+            ArgonSolution.CreateAndSaveBlank(Path.ChangeExtension(saveDialog.FileName, FileExtensions.Solution)).CreateSolutionEditorWindow().Show();
             Argon.CloseSolutionPickerWindow();
         }
     }

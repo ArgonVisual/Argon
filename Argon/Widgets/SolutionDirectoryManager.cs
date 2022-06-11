@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using Argon.FileTypes;
+using Microsoft.Win32;
 
 namespace Argon.Widgets;
 
@@ -35,12 +36,22 @@ public class SolutionDirectoryManager : Border
 
         // Create context menu
         ContextMenu contextMenu = new ContextMenu();
+
+        // Create Project
         MenuItem createProjectItem = new MenuItem() 
         {
             Header = "Create New Project"
         };
         createProjectItem.Click += ShowProjectCreator;
         contextMenu.Items.Add(createProjectItem);
+
+        // Add Existing Project
+        MenuItem addExistingProjectItem = new MenuItem()
+        {
+            Header = "Add Existing Project"
+        };
+        addExistingProjectItem.Click += AddExistingProject;
+        contextMenu.Items.Add(addExistingProjectItem);
         ContextMenu = contextMenu;
 
         _treeView = new ArgTreeView();
@@ -50,12 +61,26 @@ public class SolutionDirectoryManager : Border
         Child = _treeView;
     }
 
+    private void AddExistingProject(object sender, RoutedEventArgs e)
+    {
+        OpenFileDialog openDialog = new OpenFileDialog() 
+        {
+            Title = "Add Existing Project",
+            Filter = $"Project|*{FileExtensions.Project}"
+        };
+
+        if (openDialog.ShowDialog() ?? false)
+        {
+            AddProject(ArgonProject.ReadProject(openDialog.FileName));
+        }
+    }
+
     /// <summary>
     /// Populate the <see cref="_treeView"/> with all of the existing projects and folders.
     /// </summary>
     private void PopulateTreeView() 
     {
-        foreach (ArgProject project in _editor.Solution.Projects)
+        foreach (ArgonProject project in _editor.Solution.Projects)
         {
             ArgonProjectTreeItem projectItem = new ArgonProjectTreeItem(this, project);
             _treeView.Items.Add(projectItem);
@@ -70,10 +95,10 @@ public class SolutionDirectoryManager : Border
     }
 
     /// <summary>
-    /// Adds a <see cref="ArgProject"/> to the treeview.
+    /// Adds a <see cref="ArgonProject"/> to the treeview.
     /// </summary>
     /// <param name="project">The project to add.</param>
-    public void AddProject(ArgProject project)
+    public void AddProject(ArgonProject project)
     {
         ArgonProjectTreeItem projectItem = new ArgonProjectTreeItem(this, project);
         _treeView.Items.Add(projectItem);

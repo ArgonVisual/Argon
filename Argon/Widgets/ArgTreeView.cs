@@ -43,16 +43,16 @@ public abstract class ArgonTreeItem : TreeViewItem
 }
 
 /// <summary>
-/// Represents a <see cref="ArgProject"/> in a tree view.
+/// Represents a <see cref="ArgonProject"/> in a tree view.
 /// </summary>
 public class ArgonProjectTreeItem : ArgonTreeItem
 {
     /// <summary>
-    /// The <see cref="ArgProject"/> that this is representing.
+    /// The <see cref="ArgonProject"/> that this is representing.
     /// </summary>
-    public ArgProject Project { get; }
+    public ArgonProject Project { get; }
 
-    public ArgonProjectTreeItem(SolutionDirectoryManager directoryManager, ArgProject project) : base(directoryManager)
+    public ArgonProjectTreeItem(SolutionDirectoryManager directoryManager, ArgonProject project) : base(directoryManager)
     {
         Project = project;
         Header = new ArgTextBlock(project.Name);
@@ -84,13 +84,13 @@ public class ArgonFolderTreeItem : ArgonTreeItem
 }
 
 /// <summary>
-/// Represents a <see cref="ArgCodeFile"/> in a treeview.
+/// Represents a <see cref="ArgonCodeFile"/> in a treeview.
 /// </summary>
 public class ArgonCodeFileTreeItem : ArgonTreeItem
 {
-    private ArgCodeFile _codeFile;
+    private ArgonCodeFile _codeFile;
 
-    public ArgonCodeFileTreeItem(SolutionDirectoryManager directoryManager, ArgCodeFile codeFile) : base(directoryManager)
+    public ArgonCodeFileTreeItem(SolutionDirectoryManager directoryManager, ArgonCodeFile codeFile) : base(directoryManager)
     {
         _codeFile = codeFile;
         Header = new ArgTextBlock(_codeFile.Name);
