@@ -3,9 +3,9 @@ using System.Windows;
 
 namespace Argon.Widgets;
 
-public class ArgTextBlock : TextBlock
+public class ArgonTextBlock : TextBlock
 {
-    public ArgTextBlock()
+    public ArgonTextBlock()
     {
         Foreground = GlobalStyle.Text;
         FontSize = GlobalStyle.FontSizeNormal;
@@ -13,7 +13,7 @@ public class ArgTextBlock : TextBlock
         VerticalAlignment = VerticalAlignment.Center;
     }
 
-    public ArgTextBlock(string text) : this()
+    public ArgonTextBlock(string text) : this()
     {
         Text = text;
     }

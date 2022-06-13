@@ -6,9 +6,9 @@ namespace Argon.Widgets;
 /// <summary>
 /// A textbox that uses Argon style
 /// </summary>
-public class ArgTextBox : TextBox
+public class ArgonTextBox : TextBox
 {
-    public ArgTextBox() 
+    public ArgonTextBox() 
     {
         Background = GlobalStyle.BackgroundDark;
         BorderBrush = null;
@@ -17,7 +17,5 @@ public class ArgTextBox : TextBox
 
         Foreground = GlobalStyle.Text;
         CaretBrush = GlobalStyle.Text;
-
-        Padding = new Thickness(3);
     }
 }

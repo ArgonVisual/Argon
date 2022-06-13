@@ -37,7 +37,7 @@ public class SolutionEditor : Border
         };
 
         Grid projectsTree = new Grid();
-        projectsTree.AddRowAuto(new ArgTextBlock() 
+        projectsTree.AddRowAuto(new ArgonTextBlock() 
         {
             Text = solution.Name,
             FontSize = 40,
@@ -69,15 +69,6 @@ public class SolutionEditor : Border
         {
             Header = "File",
         };
-
-        MenuItem saveAllItem = new MenuItem()
-        {
-            Header = "Save All",
-            Icon = null,
-            IsCheckable = false,
-        };
-        fileItem.Click += (sender, args) => Argon.SaveAllItems();
-        fileItem.Items.Add(saveAllItem);
 
         return fileItem;
     }

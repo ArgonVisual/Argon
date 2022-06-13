@@ -1,5 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Argon;
 
@@ -12,7 +15,16 @@ public static class GlobalStyle
     public const double FontSizeNormal = 20;
     public const double FontSizeSmall = 15;
 
-    public static Brush Text { get; } = NewSolidBrush(200, 200, 200);
+    private static string _iconsPath = @$"C:\Users\{Environment.UserName}\Desktop\Argon\Argon\Icons";
+
+    public static ImageSource SolutionIcon = new BitmapImage(new Uri(Path.Combine(_iconsPath, "SolutionIcon.png"), UriKind.RelativeOrAbsolute));
+    public static ImageSource FolderIcon = new BitmapImage(new Uri(Path.Combine(_iconsPath, "FolderIcon.png"), UriKind.RelativeOrAbsolute));
+    public static ImageSource ProjectIcon = new BitmapImage(new Uri(Path.Combine(_iconsPath, "ProjectIcon.png"), UriKind.RelativeOrAbsolute));
+    public static ImageSource CodeFileIcon = new BitmapImage(new Uri(Path.Combine(_iconsPath, "CodeFileIcon.png"), UriKind.RelativeOrAbsolute));
+
+    public static Brush Text { get; } = NewSolidBrush(240, 240, 240);
+
+    public static Brush Error { get; } = NewSolidBrush(110, 30, 30);
 
     public static Brush BackgroundDark { get; } = NewSolidBrush(20, 20, 20);
     public static Brush Background { get; } = NewSolidBrush(28, 28, 28);

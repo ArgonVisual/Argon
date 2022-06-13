@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.DirectoryServices;
+using System.IO;
 using Argon.Helpers;
 
 namespace Argon.FileTypes;
@@ -27,12 +28,14 @@ public class ArgonProject : IFileHandle
     /// <summary>
     /// The name of the project
     /// </summary>
-    public string Name { get; }
+    // TODO: Use FileInfo this has a property of type DirectoryInfo so scrap Directory property
+    public string Name { get; private set; }
 
     /// <summary>
     /// The directory on disk that the project is contained inside of.
     /// </summary>
-    public string Directory { get; }
+    // TODO: Use DirectoryInfo
+    public string Directory { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of <see cref="ArgonProject"/>.
@@ -90,8 +93,25 @@ public class ArgonProject : IFileHandle
         return newProject;
     }
 
-    public void MarkForSave()
+    public void Rename(string newName) 
     {
-        Argon.MarkFileForSave(this);
+        string newFilename = newName;
+        string directoryName = newName;
+
+        if (!newFilename.EndsWith(FileExtensions.Project))
+        {
+            newFilename += FileExtensions.Project;
+        }
+        else
+        {
+            directoryName = directoryName.Substring(0, directoryName.Length - FileExtensions.Project.Length);
+        }
+
+        PathHelper.RenameFile(new FileInfo(Filename), newFilename);
+
+        DirectoryInfo directory = new DirectoryInfo(Directory);
+        PathHelper.RenameDirectory(directory, directoryName);
+        Directory = Directory.SubstringBeforeWithLast(Path.DirectorySeparatorChar) + directoryName;
+        Name = directoryName;
     }
 }

@@ -27,11 +27,6 @@ public class Argon
     /// </summary>
     public static Window? ProjectCreatorWindow { get; set; }
 
-    /// <summary>
-    /// Keeps track of items that need to be saved to disk.
-    /// </summary>
-    private static List<ISaveable> _filesNeedingSave = new List<ISaveable>();
-
     [STAThread]
     public static void Main(string[] args) 
     {
@@ -97,30 +92,6 @@ public class Argon
         {
             SolutionPickerWindow.Close();
             SolutionPickerWindow = null;
-        }
-    }
-
-    /// <summary>
-    /// Saves all unsaved items.
-    /// </summary>
-    public static void SaveAllItems() 
-    {
-        foreach (ISaveable item in _filesNeedingSave)
-        {
-            item.Save();
-        }
-        _filesNeedingSave.Clear();
-    }
-
-    /// <summary>
-    /// Marks a file for saving.
-    /// </summary>
-    /// <param name="file">The file that needs to be saved</param>
-    public static void MarkFileForSave(IFileHandle file) 
-    {
-        if (!_filesNeedingSave.Contains(file))
-        {
-            _filesNeedingSave.Add(file);
         }
     }
 }

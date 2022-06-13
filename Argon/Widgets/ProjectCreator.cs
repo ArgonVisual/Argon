@@ -23,7 +23,7 @@ public class ProjectCreator : Border
     /// </summary>
     private string _saveDirectory;
 
-    private ArgTextBox _projectNameText;
+    private ArgonTextBox _projectNameText;
 
     /// <summary>
     /// Initializes a new instance of <see cref="ProjectCreator"/>.
@@ -50,7 +50,7 @@ public class ProjectCreator : Border
         };
         createBlankProjectButton.Click += CreateBlankProject;
 
-        mainGrid.AddRowAuto(new ArgTextBlock("Choose a Project Template")
+        mainGrid.AddRowAuto(new ArgonTextBlock("Choose a Project Template")
         {
             FontSize = 25
         });
@@ -64,14 +64,14 @@ public class ProjectCreator : Border
 
         mainGrid.AddRowFill(projectTempatesGrid);
 
-        mainGrid.AddRowAuto(new ArgTextBlock("Project Name") 
+        mainGrid.AddRowAuto(new ArgonTextBlock("Project Name") 
         {
             FontSize = GlobalStyle.FontSizeSmall,
             HorizontalAlignment = HorizontalAlignment.Left
         });
 
 
-        _projectNameText = new ArgTextBox()
+        _projectNameText = new ArgonTextBox()
         {
             Text = "NewProject"
         };

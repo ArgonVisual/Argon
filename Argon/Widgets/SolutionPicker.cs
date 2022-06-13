@@ -39,7 +39,7 @@ public class SolutionPicker : ContentControl
 
         Grid mainGrid = new Grid();
 
-        mainGrid.AddRowAuto(new ArgTextBlock()
+        mainGrid.AddRowAuto(new ArgonTextBlock()
         {
 
         });
