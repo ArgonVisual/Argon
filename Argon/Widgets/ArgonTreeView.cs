@@ -48,7 +48,7 @@ public abstract class ArgonTreeItem : TreeViewItem
         _innerPanel.Children.Add(new Image() 
         {
             Source = GetIcon(),
-            Width = 25,
+            Stretch = Stretch.Fill,
             Height = 25,
             Margin = new Thickness(1)
         });
@@ -80,7 +80,7 @@ public abstract class ArgonTreeItem : TreeViewItem
             {
                 Header = this is ArgonProjectTreeItem ? "Remove" : "Delete"
             };
-            deleteItem.Click += (sender, args) => RemoveOrDelete();
+            deleteItem.Click += (sender, args) => AskUserForRemoveOrDelete();
             contextMenu.Items.Add(deleteItem);
         }
 
@@ -91,11 +91,11 @@ public abstract class ArgonTreeItem : TreeViewItem
 
     protected abstract ImageSource GetIcon();
 
-    private void RemoveOrDelete() 
+    private void AskUserForRemoveOrDelete() 
     {
-        if (MessageBox.Show($"{NameOfFile} will be deleted", "Are you sure?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+        if (MessageBox.Show($"{NameOfFile} will be {(this is ArgonProjectTreeItem ? "removed" : "deleted")}", "Argon Editor", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
         {
-            RemoveOrDeleteItem();
+            RemoveOrDelete();
         }
     }
 
@@ -118,7 +118,7 @@ public abstract class ArgonTreeItem : TreeViewItem
 
     protected virtual void ChangeName(string newName) { }
 
-    protected virtual void RemoveOrDeleteItem() { }
+    protected virtual void RemoveOrDelete() { }
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
@@ -243,9 +243,16 @@ public class ArgonProjectTreeItem : ArgonTreeItem
         {
             Items.Add(new ArgonProjectFolderTreeItem(DirectoryManager, directory));
         }
+
+        TreeViewUtils.PopulateCodeFiles(directoryManager, Project.Directory, AddCodeFile);
     }
 
-    protected override void RemoveOrDeleteItem()
+    private void AddCodeFile(ArgonCodeFileTreeItem codeFile)
+    {
+        Items.Add(codeFile);
+    }
+
+    protected override void RemoveOrDelete()
     {
         TreeViewUtils.RemoveFromParent(this);
         DirectoryManager.Editor.Solution.GetProjectListForDirectory(Project.Directory).Remove(Project);
@@ -271,7 +278,6 @@ public class ArgonProjectTreeItem : ArgonTreeItem
         };
 
         addFolderItem.Click += AddFolder;
-
         addCodeFileItem.Click += AddCodeFile;
 
         contextMenu.Items.Add(addFolderItem);
@@ -281,6 +287,10 @@ public class ArgonProjectTreeItem : ArgonTreeItem
     private void AddCodeFile(object sender, RoutedEventArgs e)
     {
         IsExpanded = true;
+
+        ArgonCodeFileTreeItem codeFileItem = TreeViewUtils.CreateCodeFileItem(DirectoryManager, Project.Directory);
+        Items.Add(codeFileItem);
+        codeFileItem.RenameItem();
     }
 
     private void AddFolder(object sender, RoutedEventArgs e)
@@ -311,33 +321,9 @@ public abstract class ArgonFolderTreeItem : ArgonTreeItem
         // ===============================================================
         // Derived classes are responsible for populating there subfolders
         // ===============================================================
-
-
-        // TreeViewUtils.RemoveFromParent(this);
-        // IEnumerable<DirectoryInfo> directories = Directory.EnumerateDirectories();
-        // foreach (DirectoryInfo subDirectory in directories)
-        // {
-        //     Items.Add(CreateFolder(subDirectory));
-        // }
-
-
-
-        // List<ArgonProject> projects = this is ArgonSolutionFolderTreeItem 
-        //     ? DirectoryManager.Editor.Solution.SolutionProjects 
-        //     // This is a folder within a folder so the parent we definitly not be the solution
-        //     : DirectoryManager.Editor.Solution.GetProjectListForDirectory(Directory.Parent.FullName);
-        // 
-        // foreach (ArgonProject project in projects)
-        // {
-        //     if (Directory.FullName == project.Directory.SubstringBeforeLast(Path.DirectorySeparatorChar))
-        //     {
-        //         ArgonProjectTreeItem projectItem = new ArgonProjectTreeItem(DirectoryManager, project);
-        //         Items.Add(projectItem);
-        //     }
-        // }
     }
 
-    protected override void RemoveOrDeleteItem()
+    protected override void RemoveOrDelete()
     {
         System.IO.Directory.Delete(Directory.FullName , true);
         TreeViewUtils.RemoveFromParent(this);
@@ -373,7 +359,12 @@ public class ArgonProjectFolderTreeItem : ArgonFolderTreeItem
 {
     public ArgonProjectFolderTreeItem(SolutionDirectoryManager directoryManager, DirectoryInfo directory) : base(directoryManager, directory)
     {
+        TreeViewUtils.PopulateCodeFiles(directoryManager, Directory.FullName, AddCodeFile);
+    }
 
+    private void AddCodeFile(ArgonCodeFileTreeItem codeFile)
+    {
+        Items.Add(codeFile);
     }
 
     protected override void ExpandContextMenu(ContextMenu contextMenu)
@@ -391,6 +382,10 @@ public class ArgonProjectFolderTreeItem : ArgonFolderTreeItem
     private void AddCodeFile(object sender, RoutedEventArgs e)
     {
         IsExpanded = true;
+
+        ArgonCodeFileTreeItem codeFileItem = TreeViewUtils.CreateCodeFileItem(DirectoryManager, Directory.FullName);
+        Items.Add(codeFileItem);
+        codeFileItem.RenameItem();
     }
 
     protected override void AddFolder(object sender, RoutedEventArgs e)
@@ -495,13 +490,26 @@ public class ArgonCodeFileTreeItem : ArgonTreeItem
         _codeFile = codeFile;
     }
 
-    protected override void RemoveOrDeleteItem()
+    protected override void RemoveOrDelete()
     {
         File.Delete(_codeFile.Filename);
         TreeViewUtils.RemoveFromParent(this);
     }
 
+    protected override void ChangeName(string newName)
+    {
+        PathHelper.RenameFile(new FileInfo(_codeFile.Filename), newName + FileExtensions.CodeFile);
+        _codeFile.Name = newName;
+    }
+
     protected override ImageSource GetIcon() => GlobalStyle.CodeFileIcon;
+
+    protected override void OnSelected(RoutedEventArgs e)
+    {
+        // base.OnSelected(e);
+
+        DirectoryManager.Editor.FocusOnFile(_codeFile);
+    }
 }
 
 public static class TreeViewUtils 
@@ -579,9 +587,20 @@ public static class TreeViewUtils
         return projectItem;
     }
 
-    public static ArgonCodeFileTreeItem CreateCodeFileItem() 
+    public static ArgonCodeFileTreeItem CreateCodeFileItem(SolutionDirectoryManager directoryManager, string directory) 
     {
-        throw new NotImplementedException();
+        ArgonCodeFile newCodeFile = ArgonCodeFile.CreateAndSaveBlank(Path.Combine(directory, "NewCodeFile" + FileExtensions.CodeFile));
+        ArgonCodeFileTreeItem codeFileItem = new ArgonCodeFileTreeItem(directoryManager, newCodeFile);
+        return codeFileItem;
+    }
+
+    public static void PopulateCodeFiles(SolutionDirectoryManager directoryManager, string directory, Action<ArgonCodeFileTreeItem> addCodeFileItem) 
+    {
+        foreach (string codeFilename in Directory.EnumerateFiles(directory, "*.arg"))
+        {
+            ArgonCodeFile codeFile = ArgonCodeFile.ReadCodeFile(codeFilename);
+            addCodeFileItem(new ArgonCodeFileTreeItem(directoryManager, codeFile));
+        }
     }
 
     public static void RemoveFromParent(TreeViewItem treeItem) 

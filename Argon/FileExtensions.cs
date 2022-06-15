@@ -16,4 +16,9 @@ public static class FileExtensions
     /// The file extension for a <see cref="ArgonProject"/>.
     /// </summary>
     public const string Project = ".argproj";
+
+    /// <summary>
+    /// The file extension for a <see cref="ArgonCodeFile"/>.
+    /// </summary>
+    public const string CodeFile = ".arg";
 }

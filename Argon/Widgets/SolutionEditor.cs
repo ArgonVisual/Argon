@@ -17,6 +17,8 @@ public class SolutionEditor : Border
     /// </summary>
     public ArgonSolution Solution { get; }
 
+    private CodeFileEditor _fileEditor;
+
     /// <summary>
     /// Initializes a new instance of 
     /// </summary>
@@ -47,11 +49,17 @@ public class SolutionEditor : Border
         });
         projectsTree.AddRowFill(new SolutionDirectoryManager(this));
 
-        horizontalPanel.AddColumnPixel(300, projectsTree);
+        horizontalPanel.AddColumnPixel(275, projectsTree);
+        horizontalPanel.AddColumnFill(_fileEditor = new CodeFileEditor(this));
 
         mainGrid.AddRowFill(horizontalPanel);
 
         Child = mainGrid;
+    }
+
+    public void FocusOnFile(ArgonCodeFile codeFile) 
+    {
+        _fileEditor.ShowFile(codeFile);
     }
 
     private Menu GenerateMenu() 

@@ -12,7 +12,7 @@ namespace Argon;
 public static class GlobalStyle 
 {
     public const double FontSizeLarge = 28;
-    public const double FontSizeNormal = 20;
+    public const double FontSizeNormal = 18;
     public const double FontSizeSmall = 15;
 
     private static string _iconsPath = @$"C:\Users\{Environment.UserName}\Desktop\Argon\Argon\Icons";
