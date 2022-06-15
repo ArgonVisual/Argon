@@ -41,7 +41,7 @@ public class SolutionItem : ArgonItem
 
     }
 
-    protected override ImageSource Icon => ArgonTreeItemsIcons.SolutionIcon;
+    protected override ImageSource Icon => ArgonIcons.SolutionIcon;
 }
 
 public class ProjectItem : ArgonItem
@@ -51,7 +51,7 @@ public class ProjectItem : ArgonItem
 
     }
 
-    protected override ImageSource Icon => ArgonTreeItemsIcons.ProjectIcon;
+    protected override ImageSource Icon => ArgonIcons.ProjectIcon;
 }
 
 public class CodeFileItem : ArgonItem
@@ -61,7 +61,7 @@ public class CodeFileItem : ArgonItem
 
     }
 
-    protected override ImageSource Icon => ArgonTreeItemsIcons.FileIcon;
+    protected override ImageSource Icon => ArgonIcons.FileIcon;
 }
 
 public abstract class FolderItem : ArgonItem
@@ -71,7 +71,7 @@ public abstract class FolderItem : ArgonItem
 
     }
 
-    protected sealed override ImageSource Icon => ArgonTreeItemsIcons.FolderIcon;
+    protected sealed override ImageSource Icon => ArgonIcons.FolderIcon;
 }
 
 public class SolutionFolderItem : FolderItem
@@ -107,7 +107,7 @@ public class ClassItem : DataTypeItem
 
     }
 
-    protected override ImageSource Icon => ArgonTreeItemsIcons.ClassIcon;
+    protected override ImageSource Icon => ArgonIcons.ClassIcon;
 }
 
 public class StructItem : DataTypeItem
@@ -117,7 +117,7 @@ public class StructItem : DataTypeItem
 
     }
 
-    protected override ImageSource Icon => ArgonTreeItemsIcons.StructIcon;
+    protected override ImageSource Icon => ArgonIcons.StructIcon;
 }
 
 public class EnumItem : DataTypeItem
@@ -127,17 +127,5 @@ public class EnumItem : DataTypeItem
 
     }
 
-    protected override ImageSource Icon => ArgonTreeItemsIcons.EnumIcon;
-}
-
-public class ArgonTreeItemsIcons
-{
-    private static string _iconsPath = @$"C:\Users\{Environment.UserName}\Desktop\Argon\ArgonUserInterfacePrototype\Icons";
-    public static ImageSource SolutionIcon { get; } = new BitmapImage(new Uri(Path.Combine(_iconsPath, "SolutionIcon.png"), UriKind.RelativeOrAbsolute));
-    public static ImageSource FolderIcon { get; } = new BitmapImage(new Uri(Path.Combine(_iconsPath, "FolderIcon.png"), UriKind.RelativeOrAbsolute));
-    public static ImageSource ProjectIcon { get; } = new BitmapImage(new Uri(Path.Combine(_iconsPath, "ProjectIcon.png"), UriKind.RelativeOrAbsolute));
-    public static ImageSource FileIcon { get; } = new BitmapImage(new Uri(Path.Combine(_iconsPath, "FileIcon.png"), UriKind.RelativeOrAbsolute));
-    public static ImageSource ClassIcon { get; } = new BitmapImage(new Uri(Path.Combine(_iconsPath, "ClassIcon.png"), UriKind.RelativeOrAbsolute));
-    public static ImageSource EnumIcon { get; } = new BitmapImage(new Uri(Path.Combine(_iconsPath, "EnumIcon.png"), UriKind.RelativeOrAbsolute));
-    public static ImageSource StructIcon { get; } = new BitmapImage(new Uri(Path.Combine(_iconsPath, "StructIcon.png"), UriKind.RelativeOrAbsolute));
+    protected override ImageSource Icon => ArgonIcons.EnumIcon;
 }

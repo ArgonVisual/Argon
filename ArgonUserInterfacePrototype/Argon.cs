@@ -12,7 +12,7 @@ public class Argon
         Window rootWindow = new Window() 
         {
             Title = "Argon Editor Prototype",
-            Content = new GraphEditor()
+            Content = new SolutionEditor()
         };
         app.Run(rootWindow);
     }
