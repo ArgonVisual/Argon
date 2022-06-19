@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using ArgonUserInterfacePrototype.PinTypes;
 
-namespace ArgonUserInterfacePrototype;
+namespace ArgonUserInterfacePrototype.Graph;
 
-public class GraphPanel : Grid
+public abstract class GraphPanel : Grid
 {
     private class ConnectionRenderer : FrameworkElement
     {
@@ -81,7 +78,7 @@ public class GraphPanel : Grid
             }
         }
 
-        private void DrawLine(DrawingContext dc, Pen pen, Point start, Point end) 
+        private void DrawLine(DrawingContext dc, Pen pen, Point start, Point end)
         {
             dc.DrawLine(_outerPen, start, end);
             dc.DrawLine(pen, start, end);
@@ -115,29 +112,21 @@ public class GraphPanel : Grid
 
     public GraphPanel()
     {
-        Background = BrushHelper.MakeSolidBrush(80, 80, 80);
+        Background = BrushHelper.MakeSolidBrush(200, 200, 200);
 
         ClipToBounds = true;
 
         Children.Add(_nodesCanvas = new Canvas());
         Children.Add(_connectionRenderer = new ConnectionRenderer(this));
-        Children.Add(new Border() 
+        Children.Add(new Border()
         {
-            BorderBrush = Brushes.DarkGray,
+            BorderBrush = BrushHelper.MakeSolidBrush(120, 120, 120),
             BorderThickness = new Thickness(4),
             Background = null
         });
-
-        GraphNode node1 = new GraphNode(this);
-        SetNodeScreenPosition(node1, 190, 205);
-        AddNode(node1);
-
-        GraphNode node2 = new GraphNode(this);
-        SetNodeScreenPosition(node2, 800, 220);
-        AddNode(node2);
     }
 
-    public void AddNode(GraphNode node) 
+    public void AddNode(GraphNode node)
     {
         _nodesCanvas.Children.Add(node);
     }
@@ -154,12 +143,12 @@ public class GraphPanel : Grid
         Canvas.SetTop(node, y - GraphOffset.Y);
     }
 
-    public void SetNodeGraphPosition() 
+    public void SetNodeGraphPosition()
     {
         throw new NotImplementedException();
     }
 
-    public void SetGraphOffset(Point graphOffset) 
+    public void SetGraphOffset(Point graphOffset)
     {
         GraphOffset = graphOffset;
         _nodesCanvas.Margin = new Thickness(graphOffset.X, graphOffset.Y, 0, 0);
@@ -237,7 +226,7 @@ public class GraphPanel : Grid
         }
     }
 
-    public IEnumerable<GraphNode> GetAllNodes() 
+    public IEnumerable<GraphNode> GetAllNodes()
     {
         foreach (GraphNode node in _nodesCanvas.Children)
         {
@@ -266,242 +255,6 @@ public class GraphPanel : Grid
         }
     }
 
-    private static Brush _lineBrush = Brushes.Gray;
+    private static Brush _lineBrush = BrushHelper.MakeSolidBrush(120, 120, 120);
     private static Pen _linePen = new Pen(_lineBrush, 2);
-}
-
-public class GraphNode : Grid
-{
-    public GraphPanel OuterGraph { get; }
-
-    private StackPanel _inputPins;
-    private StackPanel _outputPins;
-
-    public GraphNode(GraphPanel graphPanel)
-    {
-        OuterGraph = graphPanel;
-
-        StackPanel titlePanel = new StackPanel() 
-        {
-            Orientation = Orientation.Horizontal
-        };
-
-        titlePanel.Children.Add(new Image() 
-        {
-            Source = ArgonIcons.FunctionIcon
-        });
-
-        titlePanel.Children.Add(new TextBlock()
-        {
-            Text = "MyFunctionName",
-            VerticalAlignment = VerticalAlignment.Center,
-            FontSize = 20,
-            Margin = new Thickness(10, 0, 10, 0)
-        });
-
-        this.AddRowFill(new Border()
-        {
-            Background = BrushHelper.MakeSolidBrush(234, 225, 70),
-            Height = 40,
-            Child = titlePanel
-        });
-
-        Grid pinsPanel = new Grid();
-
-        pinsPanel.AddColumnFill(_inputPins = new StackPanel() 
-        {
-            HorizontalAlignment = HorizontalAlignment.Left
-        });
-        pinsPanel.AddColumnFill(_outputPins = new StackPanel() 
-        {
-            HorizontalAlignment = HorizontalAlignment.Right
-        });
-
-        _inputPins.Children.Add(new DataPin(this, "Age", PT_Integer.Instance, GraphPin.PinDirection.Input));
-        _inputPins.Children.Add(new DataPin(this, "Name", PT_String.Instance, GraphPin.PinDirection.Input));
-
-        _outputPins.Children.Add(new DataPin(this, "Description", PT_String.Instance, GraphPin.PinDirection.Output));
-
-        Grid executionPanel = new Grid();
-
-        executionPanel.AddColumnFill(new ExecutionPin(this, GraphPin.PinDirection.Input));
-        executionPanel.AddColumnFill(new ExecutionPin(this, GraphPin.PinDirection.Output));
-
-        this.AddRowAuto(new Border()
-        {
-            Background = Brushes.White,
-            Child = executionPanel
-        });
-
-        this.AddRowFill(new Border()
-        {
-            Background = Brushes.LightGray,
-            BorderBrush = Brushes.Gray,
-            Height = 180,
-            Child = pinsPanel
-        });
-    }
-
-    protected override void OnMouseDown(MouseButtonEventArgs e)
-    {
-        if (e.ChangedButton == MouseButton.Left)
-        {
-            OuterGraph.DraggedNode = this;
-            OuterGraph.MouseOffsetInDraggedNode = Mouse.GetPosition(this);
-            e.Handled = true;
-        }
-    }
-
-    public IEnumerable<GraphPin> GetOutputPins() 
-    {
-        foreach (GraphPin outputPin in _outputPins.Children)
-        {
-            yield return outputPin;
-        }
-    }
-
-    public IEnumerable<GraphPin> GetInputPins()
-    {
-        foreach (GraphPin inputPin in _inputPins.Children)
-        {
-            yield return inputPin;
-        }
-    }
-}
-
-public abstract class GraphPin : Border
-{
-    public enum PinDirection
-    {
-        Input,
-        Output
-    }
-
-    public PinDirection Direction { get; }
-    public GraphPin? ConnectedPin { get; private set; }
-    public GraphNode OuterNode { get; }
-
-    public const double PinSize = 20;
-    public const double HalfPinSize = PinSize / 2;
-
-    protected Ellipse ConnectorEllipse;
-
-    protected GraphPin(GraphNode outerNode, PinDirection direction, Brush pinTypeBrush) 
-    {
-        Background = _normalBrush;
-
-        OuterNode = outerNode;
-        Direction = direction;
-
-        ConnectorEllipse = new Ellipse()
-        {
-            Width = PinSize,
-            Height = PinSize,
-            Fill = pinTypeBrush,
-            Margin = new Thickness(4),
-            Stroke = Brushes.Black,
-            StrokeThickness = 2
-        };
-    }
-
-    private static Brush _hoverBrush = Brushes.Gray;
-    private static Brush _normalBrush = Brushes.Transparent;
-
-    protected override void OnMouseEnter(MouseEventArgs e)
-    {
-        OuterNode.OuterGraph.HoveredPin = this;
-        Background = _hoverBrush;
-    }
-
-    protected override void OnMouseLeave(MouseEventArgs e)
-    {
-        OuterNode.OuterGraph.HoveredPin = null;
-        Background = _normalBrush;
-    }
-
-    protected override void OnMouseDown(MouseButtonEventArgs e)
-    {
-        if (e.LeftButton == MouseButtonState.Pressed)
-        {
-            OuterNode.OuterGraph.DraggedPin = this;
-            e.Handled = true;
-        }
-    }
-
-    public void ConnectTo(GraphPin pin) 
-    {
-        if (pin.Direction == this.Direction)
-        {
-            throw new ArgumentException("Pin must have opposite direction.", nameof(pin));
-        }
-
-        pin.ConnectedPin = this;
-        ConnectedPin = pin;
-    }
-
-    public Point GetPositionInGraphSpace()
-    {
-        return ConnectorEllipse.TransformToAncestor(OuterNode.OuterGraph).Transform(new Point(HalfPinSize, HalfPinSize));
-    }
-
-    public abstract Pen Pen { get; }
-}
-
-public class ExecutionPin : GraphPin
-{
-    public ExecutionPin(GraphNode outerNode, PinDirection direction) : base(outerNode, direction, Brushes.White)
-    {
-        Child = ConnectorEllipse;
-    }
-
-    private static Pen _pen = new Pen(Brushes.White, 16)
-    {
-        EndLineCap = PenLineCap.Round,
-        StartLineCap = PenLineCap.Round,
-    };
-
-    public override Pen Pen => _pen;
-}
-
-public class DataPin : GraphPin
-{
-    public PinType PinType { get; }
-
-    public DataPin(GraphNode outerNode, string name, PinType pinType, PinDirection direction) : base(outerNode, direction, pinType.Brush)
-    {
-        PinType = pinType;
-
-        TextBlock nameText = new TextBlock()
-        {
-            Text = name,
-            VerticalAlignment = VerticalAlignment.Center,
-            FontSize = 15
-        };
-
-        StackPanel panel = new StackPanel()
-        {
-            Orientation = Orientation.Horizontal,
-            Margin = new Thickness(4)
-        };
-
-        if (Direction == PinDirection.Input)
-        {
-            panel.Children.Add(ConnectorEllipse);
-            panel.Children.Add(nameText);
-            HorizontalAlignment = HorizontalAlignment.Left;
-        }
-        else
-        {
-            panel.Children.Add(nameText);
-            panel.Children.Add(ConnectorEllipse);
-            HorizontalAlignment = HorizontalAlignment.Right;
-        }
-
-        Child = panel;
-    }
-
-    public override Pen Pen => PinType.Pen;
-
-    private static Brush _hoverBrush = Brushes.Gray;
-    private static Brush _normalBrush = Brushes.Transparent;
 }
