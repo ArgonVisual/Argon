@@ -5,7 +5,9 @@ VisualStudioVersion = 17.2.32516.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Argon", "Argon\Argon.csproj", "{2F05CC1A-9F53-4C36-8E82-0191740CC411}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgonUserInterfacePrototype", "ArgonUserInterfacePrototype\ArgonUserInterfacePrototype.csproj", "{394C2BDF-A6F4-4E8E-80F3-ABB30EA6BD3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArgonUserInterfacePrototype", "ArgonUserInterfacePrototype\ArgonUserInterfacePrototype.csproj", "{394C2BDF-A6F4-4E8E-80F3-ABB30EA6BD3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgonVertical", "ArgonVertical\ArgonVertical.csproj", "{6BBC8ED9-E2E3-411A-BC85-60F3251B03DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{394C2BDF-A6F4-4E8E-80F3-ABB30EA6BD3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{394C2BDF-A6F4-4E8E-80F3-ABB30EA6BD3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{394C2BDF-A6F4-4E8E-80F3-ABB30EA6BD3C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BBC8ED9-E2E3-411A-BC85-60F3251B03DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BBC8ED9-E2E3-411A-BC85-60F3251B03DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BBC8ED9-E2E3-411A-BC85-60F3251B03DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BBC8ED9-E2E3-411A-BC85-60F3251B03DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

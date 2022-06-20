@@ -11,7 +11,7 @@ public class SolutionEditor : ContentControl
         Grid mainGrid = new Grid();
 
         mainGrid.AddColumnPixel(250, new SolutionExplorer());
-        mainGrid.AddColumnFill(new GraphPanel_Neptune());
+        mainGrid.AddColumnFill(new GraphPanel_Mars());
 
         Content = mainGrid;
     }
