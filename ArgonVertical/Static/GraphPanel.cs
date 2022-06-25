@@ -5,16 +5,31 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup.Localizer;
 using System.Windows.Media;
 using ArgonUserInterfacePrototype;
 
 namespace ArgonVertical.Static;
 
-public class GraphPanel : Canvas
+public class GraphPanel : Border
 {
     private static GraphPanel? _global;
 
     public static GraphNode? CurrentDraggedNode;
+
+    private StackPanel _functionsCategoriesPanel;
+    private StackPanel _propertiesPanel;
+
+    private ScrollViewer _functionsScrollViewer;
+
+    public bool IsPanning { get; private set; }
+
+    private double _verticalStartOffset;
+    private double _horizontalStartOffset;
+
+    private Point _mouseStartOffset;
+
+    private const double PanningSpeed = 1.5;
 
     public static GraphPanel Global 
     { 
@@ -26,47 +41,195 @@ public class GraphPanel : Canvas
     {
         _global = this;
 
+        _functionsCategoriesPanel = new StackPanel() 
+        {
+            Margin = new Thickness(30)
+        };
+        _propertiesPanel = new StackPanel();
         Background = BrushHelper.MakeSolidBrush(210, 210, 210);
 
-        ContextMenu contextMenu = new ContextMenu();
+        Grid classesAndEditorPanel = new Grid();
 
-        MenuItem addFunctionItem = new MenuItem()
+        Grid propertiesAndFunctions = new Grid();
+
+        FunctionCategory category = new FunctionCategory("The personal life category");
+        category.AddFunction(new DefineFunctionNode("When the program starts:", null));
+        category.AddFunction(new DefineFunctionNode("Do some low-level stuff", null));
+        category.AddFunction(new DefineFunctionNode("Give tyler a pep-talk", null));
+        category.AddFunction(new DefineFunctionNode("Play with oscar and rosie", null));
+
+        FunctionCategory otherCategory = new FunctionCategory("The programming world category");
+        otherCategory.AddFunction(new DefineFunctionNode("Create Editor", null));
+        otherCategory.AddFunction(new DefineFunctionNode("Compile Code", null));
+        otherCategory.AddFunction(new DefineFunctionNode("Start game in new window", null));
+        otherCategory.AddFunction(new DefineFunctionNode("Get tyler to react to your video", null));
+
+        _functionsCategoriesPanel.Children.Add(category);
+        _functionsCategoriesPanel.Children.Add(otherCategory);
+
+        propertiesAndFunctions.AddColumnAuto(new Border() 
         {
-            Header = "Add Function"
-        };
-        addFunctionItem.Click += CreateNewFunction;
-        contextMenu.Items.Add(addFunctionItem);
+            Background = BrushHelper.MakeSolidBrush(190, 190, 190),
+            Child = new ScrollViewer() 
+            {
+                Content = _propertiesPanel,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled
+            }
+        });
 
-        ContextMenu = contextMenu;
+        for (int i = 0; i < 40; i++)
+        {
+            _propertiesPanel.Children.Add(new PropertyWidget());
+        }
 
-        GraphNode newNode = new DefineFunctionNode("Start Program", null);
-        Canvas.SetTop(newNode, 25);
-        Canvas.SetLeft(newNode, 25);
-        Children.Add(newNode);
+        propertiesAndFunctions.AddColumnFill(_functionsScrollViewer = new ScrollViewer()
+        {
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Visible,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
+            PanningMode = PanningMode.Both,
+            Content = _functionsCategoriesPanel
+        });
+
+        classesAndEditorPanel.AddRowPixel(60, new ClassesViewer());
+
+        classesAndEditorPanel.AddRowFill(propertiesAndFunctions);
+
+        Child = classesAndEditorPanel;
+    }
+
+    protected override void OnPreviewMouseMove(MouseEventArgs e)
+    {
+        if (IsPanning)
+        {
+            Point mousePosition = e.GetPosition(this);
+            _functionsScrollViewer.ScrollToHorizontalOffset(((mousePosition.X * -1) + _mouseStartOffset.X) * PanningSpeed + _horizontalStartOffset);
+            _functionsScrollViewer.ScrollToVerticalOffset(((mousePosition.Y * -1) + _mouseStartOffset.Y) * PanningSpeed + _verticalStartOffset);
+        }
+    }
+
+    protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Right)
+        {
+            _mouseStartOffset = e.GetPosition(this);
+            _verticalStartOffset = _functionsScrollViewer.VerticalOffset;
+            _horizontalStartOffset = _functionsScrollViewer.HorizontalOffset;
+            IsPanning = true;
+        }
+    }
+
+    protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
+    {
+        IsPanning = false;
     }
 
     private void CreateNewFunction(object sender, RoutedEventArgs e)
     {
-        Point mousePosition = Mouse.GetPosition(this);
         GraphNode newNode = new DefineFunctionNode("My Function", null);
-        Canvas.SetTop(newNode, mousePosition.Y);
-        Canvas.SetLeft(newNode, mousePosition.X);
-        Children.Add(newNode);
+        _functionsCategoriesPanel.Children.Add(newNode);
+    }
+
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+        if (CurrentDraggedNode is not null)
+        {
+            CurrentDraggedNode.StopDragging();
+        }
+        CurrentDraggedNode = null;
+    }
+}
+
+public class ClassesViewer : Border
+{
+    public ClassesViewer()
+    {
+        Background = BrushHelper.MakeSolidBrush(200, 200, 200);
+
+        Child = new ArgonTextBlock()
+        {
+            Text = "Classes Viewer",
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
+        };
+    }
+}
+
+public class FunctionCategory : Grid
+{
+    private StackPanel _functionRootNodes;
+
+    public FunctionCategory(string catgoryName) 
+    {
+        Margin = new Thickness(0, 0, 0, 20);
+
+        _functionRootNodes = new StackPanel() 
+        {
+            Orientation = Orientation.Horizontal
+        };
+
+        this.AddRowAuto(new Border() 
+        {
+            Background = BrushHelper.MakeSolidBrush(255, 126, 236),
+            Child = new ArgonTextBlock() 
+            {
+                Text = catgoryName
+            }
+        });
+
+        this.AddRowAuto(new Border() 
+        {
+            Background = BrushHelper.MakeSolidBrush(255, 201, 247),
+            Padding = new Thickness(0, 20, 0, 5),
+            Child = _functionRootNodes
+        });
+    }
+
+    public void AddFunction(DefineFunctionNode functionNode) 
+    {
+        _functionRootNodes.Children.Add(functionNode);
+    }
+}
+
+public class PropertyWidget : Border
+{
+    public PropertyWidget() 
+    {
+        Background = BrushHelper.MakeSolidBrush(230, 230, 230);
+
+        Margin = new Thickness(10);
+
+        HorizontalAlignment = HorizontalAlignment.Left;
+
+        StackPanel stackPanel = new StackPanel() 
+        {
+            Margin = new Thickness(8, 3, 8, 3)
+        };
+
+        stackPanel.Children.Add(new ArgonTextBlock()
+        {
+            Text = "PropertyType",
+            FontSize = GraphStyle.HeaderFontSize + 2
+        });
+
+        stackPanel.Children.Add(new ArgonTextBlock() 
+        {
+            Text = "SkeletalMeshBuildSettings",
+            Margin = new Thickness(0, -5, 0, 0),
+            FontSize = GraphStyle.NormalFontSize + 5
+        });
+
+        Child = stackPanel;
     }
 }
 
 public abstract class GraphNode : Border
 {
     private NodeTitle _nodeTitle;
-
     private static GraphNode? _hoveredNode;
-
     protected StackPanel MainPanel;
-
     private GraphNode? _parentNode;
-
     public virtual bool IsNotRootNode => true;
-
     private bool _isDirectlyHovered;
 
     public GraphNode(string title, GraphNode? parent)
@@ -75,19 +238,17 @@ public abstract class GraphNode : Border
         _parentNode = parent;
         Background = _normalBackground;
         HorizontalAlignment = HorizontalAlignment.Left;
+        VerticalAlignment = VerticalAlignment.Top;
 
-        BorderBrush = BrushHelper.MakeSolidBrush(90, 90, 90);
+        BorderBrush = GraphStyle.NormalBorder;
         BorderThickness = new Thickness(2);
 
         Padding = new Thickness(10, 5, 10, 5);
-
         CornerRadius = new CornerRadius(10);
+        Margin = new Thickness(0, 0, 0, 10);
 
         MainPanel.Children.Add(_nodeTitle = CreateNodeTitle(title));
-
         Child = MainPanel;
-
-        Margin = new Thickness(0, 0, 0, 10);
     }
 
     protected override void OnMouseEnter(MouseEventArgs e)
@@ -103,13 +264,17 @@ public abstract class GraphNode : Border
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
-        SetIsDirectlyHovered(false);
-
-        if (_parentNode is not null)
+        if (GraphPanel.CurrentDraggedNode != this)
         {
-            _parentNode.SetIsDirectlyHovered(true);
-            _hoveredNode = _parentNode;
+            SetIsDirectlyHovered(false);
+
+            if (_parentNode is not null)
+            {
+                _parentNode.SetIsDirectlyHovered(true);
+                _hoveredNode = _parentNode;
+            }
         }
+
         e.Handled = true;
     }
 
@@ -117,8 +282,7 @@ public abstract class GraphNode : Border
     {
         if (IsNotRootNode && _isDirectlyHovered)
         {
-            GraphPanel.CurrentDraggedNode = this;
-            IsHitTestVisible = false;
+            StartDragging();
         }
         e.Handled = true;
     }
@@ -137,8 +301,19 @@ public abstract class GraphNode : Border
         }
     }
 
+    public void StartDragging() 
+    {
+        IsHitTestVisible = false;
+        GraphPanel.CurrentDraggedNode = this;
+    }
+
+    public void StopDragging() 
+    {
+        IsHitTestVisible = true;
+    }
+
     private static Brush _normalBackground = BrushHelper.MakeSolidBrush(245, 245, 245);
-    private static Brush _hoverBackground = BrushHelper.MakeSolidBrush(220, 220, 220);
+    private static Brush _hoverBackground = BrushHelper.MakeSolidBrush(225, 225, 225);
 
     protected abstract NodeTitle CreateNodeTitle(string title);
 }
@@ -159,8 +334,13 @@ public abstract class GraphNodeWithBody : GraphNode
             Margin = new Thickness(0, 10, 0, -2)
         };
 
-        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Hello Tyler!) to console", this));
-        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Hello Tyler!) to console", this));
+        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Oscar is the best dog!) to console", this));
+        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Tyler is the coolest person ever!) to console", this));
+        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Tyler is the coolest person ever!) to console", this));
+        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Tyler is the coolest person ever!) to console", this));
+        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Tyler is the coolest person ever!) to console", this));
+        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Tyler is the coolest person ever!) to console", this));
+        _bodyPanel.Children.Add(new CallFunctionNode("Print [String Message](Tyler is the coolest person ever!) to console", this));
 
         MainPanel.Children.Add(_bodyPanel);
     }
@@ -172,7 +352,7 @@ public class DefineFunctionNode : GraphNodeWithBody
 
     public DefineFunctionNode(string title, GraphNode? parent) : base(title, parent) 
     {
-
+        Margin = new Thickness(30, 0, 30, 10);
     }
 
     protected override NodeTitle CreateNodeTitle(string title)
@@ -206,6 +386,9 @@ public abstract class NodeTitle : ContentControl
 
     protected NodeTitle(string title, bool isEditable) 
     {
+        HorizontalAlignment = HorizontalAlignment.Center;
+        VerticalAlignment = VerticalAlignment.Top;
+
         Content = _textbox = new InlineEditableTextBox(isEditable)
         {
             Text = title
@@ -475,7 +658,6 @@ public class StringDefaultValue : ArgonTextBlock
 {
     public StringDefaultValue(string text) 
     {
-        FontSize = 25;
         Foreground = GraphStyle.String;
 
         Inlines.Add(new Run("\""));
@@ -498,17 +680,13 @@ public class NodeStackPanel : StackPanel
         Height = 5,
         Background = BrushHelper.MakeSolidBrush(200, 200, 200),
         Margin = new Thickness(0, -5, 0, 0),
-        CornerRadius = new CornerRadius(2.5)
+        CornerRadius = new CornerRadius(2.5),
+        RenderTransform = new TranslateTransform(0, -2.5)
     };
 
     public NodeStackPanel() 
     {
         Background = Brushes.Transparent;
-    }
-
-    protected override void OnMouseEnter(MouseEventArgs e)
-    {
-
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
@@ -519,8 +697,42 @@ public class NodeStackPanel : StackPanel
         }
     }
 
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Left && GraphPanel.CurrentDraggedNode is not null)
+        {
+            if (GraphPanel.CurrentDraggedNode.Parent is NodeStackPanel nodeStackPanel)
+            {
+                nodeStackPanel.Children.Remove(GraphPanel.CurrentDraggedNode);
+            }
+            
+            int insertIndex = CaclulateInsertIndexFromMousePosition(Children.IndexOf(GraphPanel.CurrentDraggedNode));
+            if (insertIndex != -1)
+            {
+                Children.Insert(insertIndex, GraphPanel.CurrentDraggedNode);
+            }
+
+            GraphPanel.CurrentDraggedNode.StopDragging();
+            GraphPanel.CurrentDraggedNode = null;
+        }
+    }
+
     protected override void OnMouseMove(MouseEventArgs e)
     {
+        if (GraphPanel.CurrentDraggedNode is not null)
+        {
+            int insertIndex = CaclulateInsertIndexFromMousePosition(Children.IndexOf(GraphPanel.CurrentDraggedNode));
+            if (insertIndex != -1)
+            {
+                Children.Insert(insertIndex, PreviewWidget);
+            }
+        }
+    }
+
+    private int CaclulateInsertIndexFromMousePosition(int nodeIndex = -1) 
+    {
+        bool hasValidNodeIndex = nodeIndex != -1;
+
         Point mousePosition = Mouse.GetPosition(this);
 
         if (PreviewWidget.Parent is Panel panel)
@@ -528,12 +740,29 @@ public class NodeStackPanel : StackPanel
             panel.Children.Remove(PreviewWidget);
         }
 
+        double currentYOffset = 0;
+        double lastWidgetHalfHeight = 1;
+        int index = 0;
+
         for (int i = 0; i < Children.Count; i++)
         {
             UIElement currentChild = Children[i];
+            currentYOffset += currentChild.RenderSize.Height + 10;
+            lastWidgetHalfHeight = (currentChild.RenderSize.Height + 10) / 2;
+
+            if (currentYOffset - lastWidgetHalfHeight > mousePosition.Y)
+            {
+                break;
+            }
+
+            index++;
         }
 
-        Children.Insert(0, PreviewWidget);
+        int confinedIndex = index;
+
+        int validIndex = confinedIndex < 0 || confinedIndex > Children.Count ? -1 : confinedIndex;
+
+        return validIndex;
     }
 }
 
@@ -613,10 +842,13 @@ public static class GraphStyle
     public static Brush String { get; } = BrushHelper.MakeSolidBrush(255, 103, 45);
     public static Brush Number { get; } = BrushHelper.MakeSolidBrush(129, 214, 46);
 
+    public static Brush NormalBorder { get; } = BrushHelper.MakeSolidBrush(90, 90, 90);
+    public static Brush HoverBorder { get; } = BrushHelper.MakeSolidBrush(33, 161, 218);
+
     public static FontFamily Normal { get; } = new FontFamily("Candara");
     public static FontFamily Bold { get; } = new FontFamily("Candara Bold");
 
-    public static double NormalFontSize { get; } = 25;
-    public static double HeaderFontSize { get; } = 18;
+    public static double NormalFontSize { get; } = 22;
+    public static double HeaderFontSize { get; } = 15;
     public static double NumberFontSize { get; } = 40;
 }
