@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace ArgonVisualSketch.Views;
+namespace ArgonVisual.Views;
 
 public class PropertiesView : ViewBase
 {

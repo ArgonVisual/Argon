@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace ArgonVisualSketch.TreeItems;
+namespace ArgonVisual.TreeItems;
 
 public class CodeFileTreeItem : ArgonTreeItem
 {

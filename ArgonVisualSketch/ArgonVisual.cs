@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
-using ArgonVisualSketch.Views;
+using ArgonVisual.Views;
 
-namespace ArgonVisualSketch;
+namespace ArgonVisual;
 
-public class ArgonVisualSketch 
+public class ArgonVisual 
 {
     [STAThread]
     public static void Main()
@@ -14,7 +15,8 @@ public class ArgonVisualSketch
         Application app = new Application();
         Window rootWindow = new Window() 
         {
-            Title = "Argon Visual Sketch",
+            Background = Brushes.Black,
+            Title = "Argon Visual",
             Width = 1400,
             Height = 800,
             WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -26,12 +28,17 @@ public class ArgonVisualSketch
 
         Style textBlockStyle = new Style(typeof(TextBlock));
         textBlockStyle.Setters.Add(new Setter(TextBlock.ForegroundProperty, Brushes.White));
+        textBlockStyle.Setters.Add(new Setter(TextBlock.FontFamilyProperty, ArgonStyle.Fonts.Normal));
         resources.Add(typeof(TextBlock), textBlockStyle);
 
         Style treeViewStyle = new Style(typeof(TreeView));
         treeViewStyle.Setters.Add(new Setter(TreeView.BackgroundProperty, Brushes.Transparent));
         treeViewStyle.Setters.Add(new Setter(TreeView.BorderBrushProperty, null));
         resources.Add(typeof(TreeView), treeViewStyle);
+
+        SolidColorBrush selectionBrush = BrushHelper.MakeSolidBrush(34, 77, 138);
+        resources.Add(SystemColors.InactiveSelectionHighlightBrushKey, selectionBrush);
+        resources.Add(SystemColors.HighlightBrushKey, selectionBrush);
 
         rootWindow.Resources = resources;
 
@@ -40,7 +47,10 @@ public class ArgonVisualSketch
 
     private static FrameworkElement CreateViewLayout() 
     {
-        Grid grid = new Grid();
+        Grid grid = new Grid() 
+        {
+            Margin = new Thickness(0, 0, 0, 0)
+        };
 
         Grid leftPanel = new Grid();
         leftPanel.AddRowAuto(new SolutionView());
@@ -55,7 +65,7 @@ public class ArgonVisualSketch
 
         grid.AddColumnAuto(leftPanel);
         grid.AddColumnFill(middlePanel);
-        grid.AddColumnAuto(rightPanel);
+        grid.AddColumnPixel(350, rightPanel);
         return grid;
     }
 }

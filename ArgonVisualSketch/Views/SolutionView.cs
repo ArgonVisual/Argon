@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ArgonVisualSketch.TreeItems;
+using ArgonVisual.TreeItems;
 
-namespace ArgonVisualSketch.Views;
+namespace ArgonVisual.Views;
 
 public class SolutionView : ViewBase
 {
@@ -20,7 +20,7 @@ public class SolutionView : ViewBase
         solutionFolder.Items.Add(new ProjectTreeItem("MySpecialProject"));
 
         treeView.Items.Add(solutionFolder);
-        treeView.Items.Add(new ProjectTreeItem("MyProject"));
+        treeView.Items.Add(new ProjectTreeItem("MyProject") { IsSelected = true });
 
         return treeView;
     }

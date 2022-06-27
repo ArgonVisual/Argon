@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static ArgonVisualSketch.WidgetHelper;
+using static ArgonVisual.WidgetHelper;
 
-namespace ArgonVisualSketch;
+namespace ArgonVisual;
 
 public abstract class ViewBase : Border
 {
@@ -11,7 +11,6 @@ public abstract class ViewBase : Border
 
     public ViewBase() 
     {
-
         Background = ArgonStyle.ViewBorder;
 
         Grid grid = new Grid() 

@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace ArgonVisualSketch.TreeItems;
+namespace ArgonVisual.TreeItems;
 
 public abstract class ArgonTreeItem : TreeViewItem
 {
@@ -18,9 +18,10 @@ public abstract class ArgonTreeItem : TreeViewItem
     {
         StackPanel stackPanel = new StackPanel()
         {
-            Orientation = Orientation.Horizontal
+            Orientation = Orientation.Horizontal,
+            Margin = new Thickness(1, 1, 10, 1)
         };
-
+        
         stackPanel.Children.Add(new Image()
         {
             Source = GetIcon(),

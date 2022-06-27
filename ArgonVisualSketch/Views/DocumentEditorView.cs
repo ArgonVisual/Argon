@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ArgonVisualSketch.TreeItems;
+using ArgonVisual.TreeItems;
 
-namespace ArgonVisualSketch.Views;
+namespace ArgonVisual.Views;
 
 public class DocumentEditorView : ViewBase
 {
@@ -13,7 +13,17 @@ public class DocumentEditorView : ViewBase
 
     protected override FrameworkElement GetBodyContent()
     {
-        return new FrameworkElement();
+        TabControl tabControl = new TabControl()
+        { 
+            Padding = new Thickness(0),
+            BorderBrush = null
+        };
+
+        tabControl.Items.Add(new DocumentTabItem("MyFile"));
+        tabControl.Items.Add(new DocumentTabItem("MyOtherFile"));
+        tabControl.Items.Add(new DocumentTabItem("MySpecialFile"));
+
+        return tabControl;
     }
 
     protected override string Getitle()

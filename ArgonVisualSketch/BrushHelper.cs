@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Windows.Media;
 
-namespace ArgonVisualSketch;
+namespace ArgonVisual;
 
 public static class BrushHelper
 {

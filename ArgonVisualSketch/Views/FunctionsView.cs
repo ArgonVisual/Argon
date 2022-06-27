@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace ArgonVisualSketch.Views;
+namespace ArgonVisual.Views;
 
 public class FunctionsView : ViewBase
 {
@@ -12,10 +12,16 @@ public class FunctionsView : ViewBase
 
     protected override FrameworkElement GetBodyContent()
     {
-        return new TextBlock()
-        {
-            Text = "Tab Body!"
-        };
+        Grid grid = new Grid();
+        WrapPanel functionsPanel = new WrapPanel();
+
+        functionsPanel.Children.Add(new FunctionPreview() { IsSelected = true });
+        functionsPanel.Children.Add(new FunctionPreview());
+        functionsPanel.Children.Add(new FunctionPreview());
+
+        grid.AddRowFill(functionsPanel);
+
+        return grid;
     }
 
     protected override string Getitle()

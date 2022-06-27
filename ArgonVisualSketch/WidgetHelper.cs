@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ArgonVisualSketch;
+namespace ArgonVisual;
 
 /// <summary>
 /// Functions to make adding rows and columns to <see cref="Grid"/> easier.

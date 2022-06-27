@@ -2,11 +2,17 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace ArgonVisualSketch;
+namespace ArgonVisual;
 
 public static class ArgonStyle
 {
     public const bool IsDarkMode = true;
+
+    public class Fonts 
+    {
+        public static FontFamily Normal = new FontFamily("Segoe UI");
+        public static FontFamily Bold = new FontFamily("Segoe UI Semibold");
+    }
 
     public static Brush ViewBodyBackground = BrushHelper.MakeSolidBrush(25, 25, 28);
     public static Brush ViewTitleBackground = BrushHelper.MakeSolidBrush(45, 45, 48);

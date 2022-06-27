@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ArgonVisualSketch.TreeItems;
+using ArgonVisual.TreeItems;
 
-namespace ArgonVisualSketch.Views;
+namespace ArgonVisual.Views;
 
 public class ProjectView : ViewBase
 {
@@ -16,7 +16,7 @@ public class ProjectView : ViewBase
         TreeView treeView = new TreeView();
 
         ProjectFolderTreeItem projecyFolder = new ProjectFolderTreeItem("MyFolder");
-        projecyFolder.Items.Add(new CodeFileTreeItem("MyFile"));
+        projecyFolder.Items.Add(new CodeFileTreeItem("MyFile") { IsSelected = true });
         projecyFolder.Items.Add(new CodeFileTreeItem("MyOtherFile"));
 
         treeView.Items.Add(projecyFolder);
