@@ -1,13 +1,15 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
 public class PropertiesView : ViewBase
 {
-    public PropertiesView() 
+    public PropertiesView(SolutionEditor solutionEditor) : base(solutionEditor)
     {
-        
+
     }
 
     protected override FrameworkElement GetBodyContent()
@@ -18,7 +20,7 @@ public class PropertiesView : ViewBase
         };
     }
 
-    protected override string Getitle()
+    protected override string GetDefaultTitle()
     {
         return "Properties";
     }

@@ -1,13 +1,16 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using ArgonVisual.Helpers;
+using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
 public class FunctionsView : ViewBase
 {
-    public FunctionsView() 
+    public FunctionsView(SolutionEditor solutionEditor) : base(solutionEditor)
     {
-        
+
     }
 
     protected override FrameworkElement GetBodyContent()
@@ -24,7 +27,7 @@ public class FunctionsView : ViewBase
         return grid;
     }
 
-    protected override string Getitle()
+    protected override string GetDefaultTitle()
     {
         return "Functions";
     }

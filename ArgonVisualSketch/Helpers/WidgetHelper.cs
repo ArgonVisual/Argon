@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ArgonVisual;
+namespace ArgonVisual.Helpers;
 
 /// <summary>
 /// Functions to make adding rows and columns to <see cref="Grid"/> easier.
@@ -80,4 +80,29 @@ public static class WidgetHelper
     }
 
     #endregion
+
+    public static Window? GetParentWindow(FrameworkElement element) 
+    {
+        FrameworkElement? currentElement = element;
+
+        do
+        {
+            if (currentElement is Window window)
+            {
+                return window;
+            }
+
+            if (currentElement.Parent is FrameworkElement frameworkElement)
+            {
+                currentElement = frameworkElement;
+            }
+            else
+            {
+                currentElement = null;
+            }
+
+        } while (currentElement is not null);
+
+        return null;
+    }
 }

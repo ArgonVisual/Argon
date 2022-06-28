@@ -2,9 +2,9 @@
 using System.Windows.Media;
 using System.Windows;
 
-namespace ArgonVisual;
+namespace ArgonVisual.Widgets;
 
-public class DocumentItem : Border
+public class DocumentItemWidget : Border
 {
     private bool _isSelected;
     private static Brush _classbackground = BrushHelper.MakeSolidBrush(34, 185, 147);
@@ -16,10 +16,10 @@ public class DocumentItem : Border
 
     public bool IsStruct;
 
-    public bool IsSelected 
+    public bool IsSelected
     {
         get => _isSelected;
-        set 
+        set
         {
             if (value)
             {
@@ -36,7 +36,7 @@ public class DocumentItem : Border
         }
     }
 
-    public DocumentItem(string title, bool isStruct = false)
+    public DocumentItemWidget(string title, bool isStruct = false)
     {
         IsStruct = isStruct;
 

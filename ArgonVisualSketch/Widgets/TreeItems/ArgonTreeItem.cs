@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ArgonVisual.Widgets;
 
 namespace ArgonVisual.TreeItems;
 
@@ -14,8 +15,12 @@ public abstract class ArgonTreeItem : TreeViewItem
 
     private TextBlock _titleText;
 
-    public ArgonTreeItem(string title) 
+    public SolutionEditor Editor;
+
+    public ArgonTreeItem(string title, SolutionEditor editor) 
     {
+        Editor = editor;
+
         StackPanel stackPanel = new StackPanel()
         {
             Orientation = Orientation.Horizontal,
@@ -25,8 +30,8 @@ public abstract class ArgonTreeItem : TreeViewItem
         stackPanel.Children.Add(new Image()
         {
             Source = GetIcon(),
-            Width = 23,
-            Height = 23,
+            Width = 20,
+            Height = 20,
             Margin = new Thickness(3, 3, 6, 3)
         });
 

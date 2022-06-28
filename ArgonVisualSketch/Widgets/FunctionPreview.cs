@@ -4,13 +4,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace ArgonVisual;
+namespace ArgonVisual.Widgets;
 
 public class FunctionPreview : Border
 {
     private bool _isSelected;
 
-    public bool IsSelected 
+    public bool IsSelected
     {
         get => _isSelected;
         set
@@ -23,7 +23,7 @@ public class FunctionPreview : Border
     private static Brush _normalBackground = BrushHelper.MakeSolidBrush(40, 40, 45);
     private static Brush _selectedBackground = BrushHelper.MakeSolidBrush(60, 60, 65);
 
-    public FunctionPreview() 
+    public FunctionPreview()
     {
         Background = _normalBackground;
         HorizontalAlignment = HorizontalAlignment.Left;
@@ -40,7 +40,7 @@ public class FunctionPreview : Border
             Margin = new Thickness(-10, -10, -10, 0)
         };
 
-        topPanel.Children.Add(new Ellipse() 
+        topPanel.Children.Add(new Ellipse()
         {
             Fill = BrushHelper.MakeSolidBrush(72, 162, 62),
             Width = 15,

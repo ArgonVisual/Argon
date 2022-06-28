@@ -1,10 +1,11 @@
 ﻿using System.Windows.Media;
+using ArgonVisual.Widgets;
 
 namespace ArgonVisual.TreeItems;
 
 public class CodeFileTreeItem : ArgonTreeItem
 {
-    public CodeFileTreeItem(string title) : base(title)
+    public CodeFileTreeItem(string title, SolutionEditor editor) : base(title, editor)
     {
         
     }

@@ -1,10 +1,11 @@
 ﻿using System.Windows.Media;
+using ArgonVisual.Widgets;
 
 namespace ArgonVisual.TreeItems;
 
-public class ProjectFolderTreeItem : ArgonTreeItem 
+public class SolutionFolderTreeItem : ArgonTreeItem
 {
-    public ProjectFolderTreeItem(string title) : base(title)
+    public SolutionFolderTreeItem(string title, SolutionEditor editor) : base(title, editor)
     {
         IsExpanded = true;
     }

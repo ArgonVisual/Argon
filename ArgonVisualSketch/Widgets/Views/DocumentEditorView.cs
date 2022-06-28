@@ -1,14 +1,16 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using ArgonVisual.TreeItems;
+using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
 public class DocumentEditorView : ViewBase
 {
-    public DocumentEditorView() 
+    public DocumentEditorView(SolutionEditor solutionEditor) : base(solutionEditor)
     {
-        
+
     }
 
     protected override FrameworkElement GetBodyContent()
@@ -26,7 +28,7 @@ public class DocumentEditorView : ViewBase
         return tabControl;
     }
 
-    protected override string Getitle()
+    protected override string GetDefaultTitle()
     {
         return "Document Editor";
     }

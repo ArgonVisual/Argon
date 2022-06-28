@@ -1,6 +1,8 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows;
+using ArgonVisual.Helpers;
+using ArgonVisual.Widgets;
 
 namespace ArgonVisual;
 
@@ -27,9 +29,9 @@ public class DocumentTabItem : TabItem
             Margin = new Thickness(5, 3, 5, 0)
         };
 
-        stackPanel.Children.Add(new DocumentItem("MyClass") { IsSelected = true });
-        stackPanel.Children.Add(new DocumentItem("MyOtherClass"));
-        stackPanel.Children.Add(new DocumentItem("MyStruct", true));
+        stackPanel.Children.Add(new DocumentItemWidget("MyClass") { IsSelected = true });
+        stackPanel.Children.Add(new DocumentItemWidget("MyOtherClass"));
+        stackPanel.Children.Add(new DocumentItemWidget("MyStruct", true));
 
         grid.AddRowAuto(stackPanel);
         grid.AddRowFill(new GraphPanel() { Margin = new Thickness(5) });
