@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using ArgonVisual.Widgets;
 
@@ -43,6 +44,12 @@ public abstract class ArgonTreeItem : TreeViewItem
         });
 
         Header = stackPanel;
+    }
+
+    protected override void OnMouseDown(MouseButtonEventArgs e)
+    {
+        IsSelected = true;
+        e.Handled = true;
     }
 
     protected abstract ImageSource GetIcon();
