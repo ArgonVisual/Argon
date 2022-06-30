@@ -1,6 +1,5 @@
 ﻿using System.Windows.Controls;
 using System.Windows;
-using ArgonVisual;
 using System.Windows.Media;
 
 namespace ArgonVisual;
