@@ -8,6 +8,9 @@ using static ArgonVisual.Helpers.WidgetHelper;
 
 namespace ArgonVisual;
 
+/// <summary>
+/// Manages the creation of new projects.
+/// </summary>
 public class ProjectCreator : Grid
 {
     private ListBox _projectTemplatesPanel;
@@ -15,7 +18,7 @@ public class ProjectCreator : Grid
     private DirectoryInfo _directory;
     private NameTextBox _projectNameText;
 
-    private Action _finished;
+    private Action<ArgonProject> _finished;
 
     private ArgonSolution _solution;
 
@@ -24,7 +27,7 @@ public class ProjectCreator : Grid
     /// </summary>
     /// <param name="directory">The directory to place the project in once it gets created. A subdirectory gets created in this directory in which the projecy file gets placed in,</param>
     /// <param name="defaultName">The default name of the project. The user can change this.</param>
-    public ProjectCreator(DirectoryInfo directory, string defaultName, Action finished, ArgonSolution solution)
+    public ProjectCreator(DirectoryInfo directory, string defaultName, Action<ArgonProject> finished, ArgonSolution solution)
     {
         _directory = directory;
         _finished = finished;
@@ -67,11 +70,11 @@ public class ProjectCreator : Grid
     private void CreateSelectedProjectTemplate(object sender, RoutedEventArgs e)
     {
         DirectoryInfo newDirectory = _directory.CreateSubdirectory(_projectNameText.Text);
-        ArgonProject.Create(new FileInfo(Path.Combine(newDirectory.FullName, _projectNameText.Text) + ArgonFileExtensions.Project), _solution);
+        ArgonProject newProject = ArgonProject.Create(new FileInfo(Path.Combine(newDirectory.FullName, _projectNameText.Text) + ArgonFileExtensions.Project), _solution);
 
         GetParentWindow(this)?.Close();
 
-        _finished();
+        _finished(newProject);
     }
 
     private void PopulateProjectTemplates()
@@ -93,7 +96,14 @@ public class ProjectCreator : Grid
         });
     }
 
-    public static void Show(DirectoryInfo directory, string defaultName, Action finished, ArgonSolution solution)
+    /// <summary>
+    /// Shows a new window containing <see cref="ProjectCreator"/>.
+    /// </summary>
+    /// <param name="directory">The directory to place the project in once it is created.</param>
+    /// <param name="defaultName">The default starting name for the project. ex: "NewProject".</param>
+    /// <param name="finished">Gets called once the project has been created. ArgonProject: The new project that was created.</param>
+    /// <param name="solution">The solution that the new project should be owned by.</param>
+    public static void Show(DirectoryInfo directory, string defaultName, Action<ArgonProject> finished, ArgonSolution solution)
     {
         ProjectCreator solutionPicker = new ProjectCreator(directory, defaultName, finished, solution);
         Window window = new Window()

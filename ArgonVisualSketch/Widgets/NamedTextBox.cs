@@ -3,14 +3,23 @@ using System.Windows.Controls;
 
 namespace ArgonVisual;
 
+/// <summary>
+/// A textbox that displays a name above it.
+/// </summary>
 public class NameTextBox : StackPanel
 {
+    /// <summary>
+    /// The name shown above the text box.
+    /// </summary>
     public string BoxName
     {
         get => _nameText.Text;
         set => _nameText.Text = value;
     }
 
+    /// <summary>
+    /// The text inside of the textbox.
+    /// </summary>
     public string Text
     {
         get => _textBox.Text;
@@ -21,6 +30,10 @@ public class NameTextBox : StackPanel
 
     private TextBlock _nameText;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="NameTextBox"/>.
+    /// </summary>
+    /// <param name="name">The name to show above.</param>
     public NameTextBox(string name)
     {
         Margin = new Thickness(10);

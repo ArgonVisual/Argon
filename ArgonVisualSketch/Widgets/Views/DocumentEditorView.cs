@@ -6,6 +6,9 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
+/// <summary>
+/// View that shows the graph panel and a tab bar.
+/// </summary>
 public class DocumentEditorView : ViewBase
 {
     public DocumentEditorView(SolutionEditor solutionEditor) : base(solutionEditor)

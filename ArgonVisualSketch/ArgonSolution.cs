@@ -35,6 +35,10 @@ public class ArgonSolution
     /// </summary>
     public FileInfo FileInfo { get; }
 
+    /// <summary>
+    /// The projects that this solution references.
+    /// Use <see cref="AddProject(ArgonProject)"/> and <see cref="RemoveProject(ArgonProject)"/> to modify this.
+    /// </summary>
     public IReadOnlyList<ArgonProject> Projects => _projects;
 
     private List<ArgonProject> _projects;
@@ -113,12 +117,20 @@ public class ArgonSolution
         }
     }
 
+    /// <summary>
+    /// Adds a project to be referenced in this solution.
+    /// </summary>
+    /// <param name="project">The project to add.</param>
     public void AddProject(ArgonProject project) 
     {
         _projects.Add(project);
         Save(this);
     }
 
+    /// <summary>
+    /// Removes a project to be referenced in this solution.
+    /// </summary>
+    /// <param name="project">The project to remove.</param>
     public void RemoveProject(ArgonProject project) 
     {
         _projects.Remove(project);

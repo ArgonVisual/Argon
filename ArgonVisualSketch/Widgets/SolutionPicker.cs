@@ -10,6 +10,9 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace ArgonVisual.Widgets;
 
+/// <summary>
+/// Manages the opening and creation of solutions.
+/// </summary>
 public class SolutionPicker : ContentControl
 {
     private class SolutionCreator : Grid
@@ -112,7 +115,7 @@ public class SolutionPicker : ContentControl
             // Ask the user to create a starting project
             // to be placed into the solution
             // Becuase a solution cannot have 0 projects
-            ProjectCreator.Show(directory, name, () => CloseSolutionPicker(this, newSolution), newSolution);
+            ProjectCreator.Show(directory, name, (ArgonProject newProject) => CloseSolutionPicker(this, newSolution), newSolution);
         }
     }
 
@@ -126,6 +129,9 @@ public class SolutionPicker : ContentControl
         WidgetHelper.GetParentWindow(caller)?.Close();
     }
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="SolutionPicker"/>.
+    /// </summary>
     public SolutionPicker()
     {
         Content = CreateOpenOrCreateButtons();
@@ -135,11 +141,8 @@ public class SolutionPicker : ContentControl
     {
         Grid grid = new Grid();
 
-        Button createSolution = CreateButton("Create new Solution", ShowSolutionCreator);
-        Button openSolution = CreateButton("Open Solution", OpenSolution);
-
-        grid.AddColumnFill(createSolution);
-        grid.AddColumnFill(openSolution);
+        grid.AddColumnFill(CreateButton("Create new Solution", ShowSolutionCreator));
+        grid.AddColumnFill(CreateButton("Open Solution", OpenSolution));
 
         return grid;
     }
@@ -188,6 +191,9 @@ public class SolutionPicker : ContentControl
         return button;
     }
 
+    /// <summary>
+    /// Shows <see cref="SolutionPicker"/> in a new window.
+    /// </summary>
     public static void Show()
     {
         SolutionPicker solutionPicker = new SolutionPicker();

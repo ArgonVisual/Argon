@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ArgonVisual.Helpers;
@@ -16,28 +17,47 @@ public class ProjectFolderTreeItem : ArgonTreeItem
     /// <summary>
     /// The directory that this item is representing.
     /// </summary>
-    public DirectoryInfo DirectoryInfo { get; }
+    public DirectoryInfo DirectoryInfo { get; private set; }
 
+    /// <summary>
+    /// Initializes a new <see cref="ProjectFolderTreeItem"/>.
+    /// </summary>
+    /// <param name="directoryInfo">The project folder directory that this represents.</param>
+    /// <param name="editor">The <see cref="SolutionEditor"/> that owns this.</param>
     public ProjectFolderTreeItem(DirectoryInfo directoryInfo, SolutionEditor editor) : base(directoryInfo.Name, editor)
     {
         DirectoryInfo = directoryInfo;
         IsExpanded = true;
 
-        ContextMenu contextMenu = new ContextMenu();
-
-        TextMenuItem addFolderItem = new TextMenuItem("Add Folder", AddNewFolder);
-        TextMenuItem addCodeFileItem = new TextMenuItem("Add Code File", AddNewCodeFile);
-        contextMenu.Items.Add(addFolderItem);
-        contextMenu.Items.Add(addCodeFileItem);
-
-        ContextMenu = contextMenu;
+        ContextMenu.Items.Add(new TextMenuItem("Add Folder", AddNewFolder));
+        ContextMenu.Items.Add(new TextMenuItem("Add Code File", AddNewCodeFile));
     }
 
     public static ProjectFolderTreeItem CreateNewFolderInDirectory(DirectoryInfo directory, SolutionEditor editor) 
     {
         string folderName = PathHelper.MakeUniqueFolderName(directory.FullName, PathHelper.DefaultFolderName);
         DirectoryInfo subDirectory = directory.CreateSubdirectory(folderName);
-        return new ProjectFolderTreeItem(subDirectory, editor);
+        ProjectFolderTreeItem newFolderItem = new ProjectFolderTreeItem(subDirectory, editor);
+        newFolderItem.RenameItem();
+        newFolderItem.IsSelected = true;
+        return newFolderItem;
+    }
+
+    protected override void RenameItemInternal(string newName)
+    {
+        string newDirectory = PathHelper.RenameFolder(DirectoryInfo.FullName, newName);
+        DirectoryInfo = new DirectoryInfo(newDirectory);
+    }
+
+    protected override string? IsValidName(string name)
+    {
+        if (DirectoryInfo.Parent is not null
+         && DirectoryInfo.Parent.GetDirectories().Any((info) => info.Name == name))
+        {
+            return $"A folder named \"{name}\" already exists.";
+        }
+
+        return null;
     }
 
     private void AddNewFolder()

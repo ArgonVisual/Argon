@@ -6,6 +6,9 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
+/// <summary>
+/// Shows functions inside of the selected class or struct
+/// </summary>
 public class FunctionsView : ViewBase
 {
     public FunctionsView(SolutionEditor solutionEditor) : base(solutionEditor)

@@ -8,6 +8,9 @@ using ArgonVisual.Views;
 
 namespace ArgonVisual.Widgets;
 
+/// <summary>
+/// Widget for editing the contents of a solution.
+/// </summary>
 public class SolutionEditor : Grid
 {
     /// <summary>
@@ -17,6 +20,10 @@ public class SolutionEditor : Grid
 
     private List<ViewBase> _views;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="SolutionEditor"/> with the solution to edit.
+    /// </summary>
+    /// <param name="solution">The solution to edit.</param>
     private SolutionEditor(ArgonSolution solution)
     {
         Solution = solution;
@@ -45,11 +52,20 @@ public class SolutionEditor : Grid
         return view;
     }
 
+    /// <summary>
+    /// Finds the first instance of type <typeparamref name="T"/> in this editor.
+    /// </summary>
+    /// <typeparam name="T">The type of view to find.</typeparam>
+    /// <returns>The found view. Null if not found.</returns>
     public T? FindView<T>() where T : ViewBase
     {
         return _views.FirstOrDefault((view) => view is T) as T;
     }
 
+    /// <summary>
+    /// Shows a new window containing <see cref="SolutionEditor"/> with the solution to edit.
+    /// </summary>
+    /// <param name="solution">The soution to edit.</param>
     public static void Show(ArgonSolution solution)
     {
         Window window = new Window()

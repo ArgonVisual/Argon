@@ -8,24 +8,48 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
+/// <summary>
+/// Shows all projects and solution folders in a solution.
+/// The selected project gets shown in <see cref="ProjectView"/>.
+/// </summary>
 public class SolutionView : ViewBase
 {
     private TreeViewHeader _header;
+    private TreeView _treeView;
 
     public SolutionView(SolutionEditor solutionEditor) : base(solutionEditor)
     {
         MinHeight = 250;
 
-        _header = new TreeViewHeader(OpenSolutionOptions)
+        _treeView = new TreeView();
+
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.Items.Add(new TextMenuItem("Add New Project", AddNewProject));
+
+        _header = new TreeViewHeader(ShowSolutionOptions)
         {
             Title = Editor.Solution.Name,
-            Icon = ArgonStyle.Icons.Solution
+            Icon = ArgonStyle.Icons.Solution,
+            ContextMenu = contextMenu
         };
     }
 
-    private void OpenSolutionOptions()
+    private void AddNewProject()
     {
-        throw new NotImplementedException();
+        if (Editor.Solution.FileInfo.Directory is not null)
+        {
+            ProjectCreator.Show(Editor.Solution.FileInfo.Directory, "NewProject", HandleNewProjectCreated, Editor.Solution);
+        }
+    }
+
+    private void HandleNewProjectCreated(ArgonProject newProject)
+    {
+        _treeView.Items.Add(new ProjectTreeItem(newProject, Editor));
+    }
+
+    private void ShowSolutionOptions()
+    {
+        MessageBox.Show("Not implemented", "Argon");
     }
 
     protected override FrameworkElement GetBodyContent()
@@ -34,20 +58,18 @@ public class SolutionView : ViewBase
 
         mainGrid.AddRowAuto(_header);
 
-        TreeView treeView = new TreeView();
-
         IReadOnlyList<ArgonProject> projects = Editor.Solution.Projects;
 
         for (int i = 0; i < projects.Count; i++)
         {
-            treeView.Items.Add(new ProjectTreeItem(projects[i], Editor));
+            _treeView.Items.Add(new ProjectTreeItem(projects[i], Editor));
         }
 
-        ProjectTreeItem firstProject = (ProjectTreeItem)treeView.Items[0];
+        ProjectTreeItem firstProject = (ProjectTreeItem)_treeView.Items[0];
         Editor.FindView<ProjectView>()?.ShowProject(firstProject.Project);
         firstProject.IsSelected = true;
 
-        mainGrid.AddRowFill(treeView);
+        mainGrid.AddRowFill(_treeView);
 
         return mainGrid;
     }

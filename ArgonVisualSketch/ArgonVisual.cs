@@ -9,6 +9,9 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual;
 
+/// <summary>
+/// Contains the startup for the application.
+/// </summary>
 public class ArgonVisual 
 {
     [STAThread]

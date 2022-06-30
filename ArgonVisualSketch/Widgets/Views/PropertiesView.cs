@@ -5,6 +5,9 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
+/// <summary>
+/// The the selected classes/structs properties.
+/// </summary>
 public class PropertiesView : ViewBase
 {
     public PropertiesView(SolutionEditor solutionEditor) : base(solutionEditor)

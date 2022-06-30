@@ -6,10 +6,14 @@ using System.Windows.Media.Imaging;
 
 namespace ArgonVisual;
 
+/// <summary>
+/// Represents the visual style for argon dark mode
+/// </summary>
 public static class ArgonStyle
 {
-    public const bool IsDarkMode = true;
-
+    /// <summary>
+    /// Fonts used in argon
+    /// </summary>
     public class Fonts 
     {
         public static FontFamily Normal = new FontFamily("Segoe UI");
@@ -20,6 +24,9 @@ public static class ArgonStyle
     public static Brush ViewTitleBackground = BrushHelper.MakeSolidBrush(45, 45, 48);
     public static Brush ViewBorder = BrushHelper.MakeSolidBrush(38, 38, 45);
 
+    /// <summary>
+    /// Icons used in argon
+    /// </summary>
     public static class Icons 
     {
         private static string _iconsPath = @$"C:\Users\{Environment.UserName}\Desktop\Argon\ArgonVisualSketch\Icons\";

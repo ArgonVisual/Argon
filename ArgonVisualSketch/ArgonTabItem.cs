@@ -6,6 +6,9 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual;
 
+/// <summary>
+/// Represents an item in a <see cref="ArgonCodeFile"/>
+/// </summary>
 public class DocumentTabItem : TabItem
 {
     private static Brush _textBrush = Brushes.Black;

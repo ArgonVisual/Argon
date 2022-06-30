@@ -2,8 +2,8 @@
 using System.Windows.Media;
 using System.Windows;
 
-namespace ArgonVisual.Widgets;
 
+namespace ArgonVisual.Widgets;
 public class DocumentItemWidget : Border
 {
     private bool _isSelected;

@@ -3,9 +3,17 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual.TreeItems;
 
+/// <summary>
+/// Represents a <see cref="ArgonSolution"/>.
+/// </summary>
 public class SolutionTreeItem : ArgonTreeItem
 {
-    public SolutionTreeItem(string title, SolutionEditor editor) : base(title, editor)
+    /// <summary>
+    /// Initializes a new instance of <see cref="SolutionTreeItem"/>.
+    /// </summary>
+    /// <param name="solution">The <see cref="ArgonSolution"/> that this tree item represents.</param>
+    /// <param name="editor">The <see cref="SolutionEditor"/> that owns this tree item.</param>
+    public SolutionTreeItem(ArgonSolution solution, SolutionEditor editor) : base(solution.Name, editor)
     {
         
     }

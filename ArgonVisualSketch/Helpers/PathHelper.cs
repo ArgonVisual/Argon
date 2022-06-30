@@ -40,4 +40,27 @@ public static class PathHelper
 
         return resultName;
     }
+
+    /// <summary>
+    /// Renames a file
+    /// </summary>
+    /// <param name="beforeFullFilename">The full name of the file including the directory.</param>
+    /// <param name="newName">The new name of the file without the directory and with the extension.</param>
+    public static void RenameFile(string beforeFullFilename, string newName)
+    {
+        File.Move(beforeFullFilename, beforeFullFilename.SubstringBeforeWithLast(Path.DirectorySeparatorChar) + newName);
+    }
+
+    /// <summary>
+    /// Renames a directory
+    /// </summary>
+    /// <param name="beforeDirectoryName">The full name of the directory.</param>
+    /// <param name="newFolderName">The new name of the folder with out the sub directorys</param>
+    /// <returns>The full new name of the directory</returns>
+    public static string RenameFolder(string beforeDirectoryName, string newFolderName)
+    {
+        string newFullName = beforeDirectoryName.SubstringBeforeWithLast(Path.DirectorySeparatorChar) + newFolderName;
+        Directory.Move(beforeDirectoryName, newFullName);
+        return newFullName;
+    }
 }

@@ -12,24 +12,26 @@ using ArgonVisual.Widgets;
 
 namespace ArgonVisual.Views;
 
+/// <summary>
+/// Shows the selected project from <see cref="SolutionView"/>.
+/// </summary>
 public class ProjectView : ViewBase
 {
     private TreeViewHeader _header;
-    private TreeView _treeView;
+    private TreeView? _treeView;
+
+    private ContentControl _treeViewContent;
 
     public ArgonProject? ShownProject { get; private set; }
 
     public ProjectView(SolutionEditor solutionEditor) : base(solutionEditor)
     {
-        _treeView = new TreeView();
+        _treeViewContent = new ContentControl();
 
         ContextMenu contextMenu = new ContextMenu();
 
-        TextMenuItem addFolderItem = new TextMenuItem("Add Folder", AddNewFolder);
-        TextMenuItem addCodeFileItem = new TextMenuItem("Add Code File", AddNewCodeFile);
-
-        contextMenu.Items.Add(addFolderItem);
-        contextMenu.Items.Add(addCodeFileItem);
+        contextMenu.Items.Add(new TextMenuItem("Add Folder", AddNewFolder));
+        contextMenu.Items.Add(new TextMenuItem("Add Code File", AddNewCodeFile));
 
         _header = new TreeViewHeader(ShowProjectOptions)
         {
@@ -45,7 +47,7 @@ public class ProjectView : ViewBase
 
     private void AddNewFolder()
     {
-        if (ShownProject is not null && ShownProject.FileInfo.Directory is not null)
+        if (_treeView is not null && ShownProject is not null && ShownProject.FileInfo.Directory is not null)
         {
             _treeView.Items.Add(ProjectFolderTreeItem.CreateNewFolderInDirectory(ShownProject.FileInfo.Directory, Editor));
         }
@@ -57,6 +59,18 @@ public class ProjectView : ViewBase
         {
             ProjectOptions.Show(ShownProject);
         }
+    }
+
+    private TreeView MakeTreeViewForProject(ArgonProject project) 
+    {
+        TreeView treeView = new TreeView();
+
+        if (project.FileInfo.Directory is not null)
+        {
+            PopulateDirectory(project.FileInfo.Directory, treeView);
+        }
+
+        return treeView;
     }
 
     protected override FrameworkElement GetBodyContent()
@@ -72,7 +86,7 @@ public class ProjectView : ViewBase
 
         mainGrid.AddRowAuto(_header);
 
-        mainGrid.AddRowFill(_treeView);
+        mainGrid.AddRowFill(_treeViewContent);
 
         return mainGrid;
     }
@@ -84,17 +98,23 @@ public class ProjectView : ViewBase
 
     public void ShowProject(ArgonProject project)
     {
-        ShownProject = project;
-        _header.Title = project.Name;
+        if (ShownProject != project)
+         {
+            ShownProject = project;
+            _header.Title = project.Name;
 
-        if (project.FileInfo.Directory is not null)
-        {
-            PopulateDirectory(project.FileInfo.Directory, _treeView);
+            if (project.TreeView is null && project.FileInfo.Directory is not null)
+            {
+                _treeView = project.TreeView = MakeTreeViewForProject(project);
+            }
+
+            _treeViewContent.Content = project.TreeView;
         }
     }
 
     private void PopulateDirectory(DirectoryInfo directoryInfo, ItemsControl itemsControl) 
     {
+        itemsControl.Items.Clear();
         IEnumerable<DirectoryInfo> directories = directoryInfo.EnumerateDirectories();
         foreach (DirectoryInfo directory in directories)
         {

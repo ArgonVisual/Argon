@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Controls;
 using Argon.Helpers;
 
 namespace ArgonVisual;
 
 /// <summary>
-/// Represents a project
+/// Represents a project.
+/// A project can be referenced by a solution.
+/// A project can be compiled into a executable or a library.
 /// </summary>
 public class ArgonProject 
 {
@@ -27,6 +30,8 @@ public class ArgonProject
     /// </summary>
     public FileInfo FileInfo { get; }
 
+    public TreeView? TreeView { get; set; }
+
     /// <summary>
     /// Initializes a new instance of <see cref="ArgonProject"/> with <paramref name="fileInfo"/>.
     /// </summary>
@@ -36,6 +41,12 @@ public class ArgonProject
         FileInfo = fileInfo;
     }
 
+    /// <summary>
+    /// Creates a new argon project on disk at <see cref="FileInfo"/> and references it in <paramref name="ownerSolution"/>.
+    /// </summary>
+    /// <param name="fileInfo">The location to where this project should be located.</param>
+    /// <param name="ownerSolution">The solution that owns this project.</param>
+    /// <returns>The new <see cref="ArgonProject"/>.</returns>
     public static ArgonProject Create(FileInfo fileInfo, ArgonSolution ownerSolution) 
     {
         ArgonProject newProject = new ArgonProject(fileInfo);
