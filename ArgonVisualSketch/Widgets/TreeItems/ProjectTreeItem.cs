@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 using ArgonVisual.Views;
 using ArgonVisual.Widgets;
@@ -30,5 +32,24 @@ public class ProjectTreeItem : ArgonTreeItem
     protected override void OnSelected(RoutedEventArgs e)
     {
         Editor.FindView<ProjectView>()?.ShowProject(Project);
+    }
+
+    protected override string? IsValidName(string name)
+    {
+        if (Project.FileInfo.Directory is not null
+         && Project.FileInfo.Directory.Parent is not null)
+        {
+            if (Project.FileInfo.Directory.Parent.GetDirectories().Any((info) => info.Name.Equals(name, System.StringComparison.Ordinal)))
+            {
+                return $"A project named \"{name}\" already exists in the same directory";
+            }
+        }
+
+        return null;
+    }
+
+    protected override void RenameItemInternal(string newName)
+    {
+        Project.Rename(newName);
     }
 }

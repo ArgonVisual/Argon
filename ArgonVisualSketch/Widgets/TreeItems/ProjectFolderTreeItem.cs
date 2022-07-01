@@ -59,6 +59,15 @@ public class ProjectFolderTreeItem : ArgonTreeItem
         return null;
     }
 
+    protected override void DeleteItemInternal()
+    {
+        DirectoryInfo.Delete(true);
+        if (Parent is ItemsControl itemsControl)
+        {
+            itemsControl.Items.Remove(this);
+        }
+    }
+
     private void AddNewFolder()
     {
         Items.Add(CreateNewFolderInDirectory(DirectoryInfo, Editor));

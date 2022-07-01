@@ -7,12 +7,12 @@ using System.Windows.Media.Imaging;
 namespace ArgonVisual;
 
 /// <summary>
-/// Represents the visual style for argon dark mode
+/// Contains brushes, icons and fonts that are used throughout Argon.
 /// </summary>
 public static class ArgonStyle
 {
     /// <summary>
-    /// Fonts used in argon
+    /// Fonts used in Argon
     /// </summary>
     public class Fonts 
     {
@@ -25,17 +25,25 @@ public static class ArgonStyle
     public static Brush ViewBorder = BrushHelper.MakeSolidBrush(38, 38, 45);
 
     /// <summary>
-    /// Icons used in argon
+    /// Icons used to represent types of files
     /// </summary>
     public static class Icons 
     {
         private static string _iconsPath = @$"C:\Users\{Environment.UserName}\Desktop\Argon\ArgonVisualSketch\Icons\";
+        /// <summary>The icon for a <see cref="ArgonSolution"/>.</summary>
         public static ImageSource Solution { get; } = new BitmapImage(new Uri(_iconsPath + "Solution.png", UriKind.Absolute));
+        /// <summary>The icon for a solution or project folder.</summary>
         public static ImageSource Folder { get; } = new BitmapImage(new Uri(_iconsPath + "Folder.png", UriKind.Absolute));
+        /// <summary>The icon for a <see cref="ArgonCodeFile"/></summary>
         public static ImageSource CodeFile { get; } = new BitmapImage(new Uri(_iconsPath + "CodeFile.png", UriKind.Absolute));
+        /// <summary>The icon for a <see cref="ArgonProject"/></summary>
         public static ImageSource Project { get; } = new BitmapImage(new Uri(_iconsPath + "ArgonProject.png", UriKind.Absolute));
     }
 
+    /// <summary>
+    /// Initializes <paramref name="resources"/> with the style that Argon uses.
+    /// </summary>
+    /// <param name="resources">The <see cref="ResourceDictionary"/> to initialize.</param>
     public static void Initialize(ResourceDictionary resources) 
     {
         Style windowBlockStyle = new Style(typeof(Window));

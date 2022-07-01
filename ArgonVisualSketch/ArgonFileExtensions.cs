@@ -1,7 +1,7 @@
 ﻿namespace ArgonVisual;
 
 /// <summary>
-/// File extensions for various argon file types.
+/// File extensions for various Argon file types.
 /// </summary>
 public static class ArgonFileExtensions
 {

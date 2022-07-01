@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -70,7 +71,8 @@ public class ProjectCreator : Grid
     private void CreateSelectedProjectTemplate(object sender, RoutedEventArgs e)
     {
         DirectoryInfo newDirectory = _directory.CreateSubdirectory(_projectNameText.Text);
-        ArgonProject newProject = ArgonProject.Create(new FileInfo(Path.Combine(newDirectory.FullName, _projectNameText.Text) + ArgonFileExtensions.Project), _solution);
+        ArgonProject newProject = ArgonProject.Create(new FileInfo(Path.Combine(newDirectory.FullName, _projectNameText.Text) + ArgonFileExtensions.Project));
+        _solution.AddProject(newProject);
 
         GetParentWindow(this)?.Close();
 

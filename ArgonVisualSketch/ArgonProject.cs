@@ -42,16 +42,15 @@ public class ArgonProject
     }
 
     /// <summary>
-    /// Creates a new argon project on disk at <see cref="FileInfo"/> and references it in <paramref name="ownerSolution"/>.
+    /// Creates a new <see cref="ArgonProject"/> on disk at <see cref="FileInfo"/> and references it in <paramref name="ownerSolution"/>.
     /// </summary>
     /// <param name="fileInfo">The location to where this project should be located.</param>
     /// <param name="ownerSolution">The solution that owns this project.</param>
     /// <returns>The new <see cref="ArgonProject"/>.</returns>
-    public static ArgonProject Create(FileInfo fileInfo, ArgonSolution ownerSolution) 
+    public static ArgonProject Create(FileInfo fileInfo) 
     {
         ArgonProject newProject = new ArgonProject(fileInfo);
         Save(newProject);
-        ownerSolution.AddProject(newProject);
         return newProject;
     }
 
@@ -90,6 +89,11 @@ public class ArgonProject
 
             }
         }
+    }
+
+    public void Rename(string newName) 
+    {
+        throw new NotImplementedException();
     }
 
     public string GetRelativePathToSolution(ArgonSolution solution) 

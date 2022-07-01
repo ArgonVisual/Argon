@@ -4,7 +4,7 @@ using ArgonVisual.Widgets;
 namespace ArgonVisual.TreeItems;
 
 /// <summary>
-/// Represents a code file in a argon tree item.
+/// Represents a code file in a Argon tree item.
 /// </summary>
 public class CodeFileTreeItem : ArgonTreeItem
 {

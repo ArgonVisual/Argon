@@ -57,7 +57,7 @@ public class ArgonProject : IFileHandle
         // Write the serialization version of the file
         // Always save to the latest version
         writer.Write((uint)Version.Latest);
-        writer.Write("This is an argon project");
+        writer.Write("This is an Argon project");
     }
 
     /// <summary>
