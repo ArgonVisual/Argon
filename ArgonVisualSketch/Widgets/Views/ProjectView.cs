@@ -36,14 +36,22 @@ public class ProjectView : ViewBase
         };
     }
 
+    private bool CanCreateItem() 
+    {
+        return _treeView is not null && ShownProject is not null && ShownProject.FileInfo.Directory is not null;
+    }
+
     private void AddNewCodeFile()
     {
-        
+        if (CanCreateItem())
+        {
+            _treeView.Items.Add(CodeFileTreeItem.CreateNewCodeFileInDirectory(ShownProject.FileInfo.Directory, Editor));
+        }
     }
 
     private void AddNewFolder()
     {
-        if (_treeView is not null && ShownProject is not null && ShownProject.FileInfo.Directory is not null)
+        if (CanCreateItem())
         {
             _treeView.Items.Add(ProjectFolderTreeItem.CreateNewFolderInDirectory(ShownProject.FileInfo.Directory, Editor));
         }
@@ -111,11 +119,19 @@ public class ProjectView : ViewBase
     private void PopulateDirectory(DirectoryInfo directoryInfo, ItemsControl itemsControl) 
     {
         itemsControl.Items.Clear();
+
         IEnumerable<DirectoryInfo> directories = directoryInfo.EnumerateDirectories();
         foreach (DirectoryInfo directory in directories)
         {
             ProjectFolderTreeItem newFolder = new ProjectFolderTreeItem(directory, Editor);
             PopulateDirectory(directory, newFolder);
+            itemsControl.Items.Add(newFolder);
+        }
+
+        IEnumerable<FileInfo> codeFiles = directoryInfo.EnumerateFiles($"*{ArgonFileExtensions.CodeFile}");
+        foreach (FileInfo codeFile in codeFiles)
+        {
+            CodeFileTreeItem newFolder = new CodeFileTreeItem(ArgonCodeFile.Read(codeFile), Editor);
             itemsControl.Items.Add(newFolder);
         }
     }

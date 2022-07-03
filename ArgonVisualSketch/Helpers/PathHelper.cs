@@ -38,7 +38,7 @@ public static class PathHelper
             number++;
         }
 
-        return resultName;
+        return number > 0 ? resultName + number.ToString() : resultName;
     }
 
     /// <summary>
@@ -46,9 +46,12 @@ public static class PathHelper
     /// </summary>
     /// <param name="beforeFullFilename">The full name of the file including the directory.</param>
     /// <param name="newName">The new name of the file without the directory and with the extension.</param>
-    public static void RenameFile(string beforeFullFilename, string newName)
+    /// <returns>The fullpath of the new name of the file.</returns>
+    public static string RenameFile(string beforeFullFilename, string newName)
     {
-        File.Move(beforeFullFilename, beforeFullFilename.SubstringBeforeWithLast(Path.DirectorySeparatorChar) + newName);
+        string newFullName = beforeFullFilename.SubstringBeforeWithLast(Path.DirectorySeparatorChar) + newName;
+        File.Move(beforeFullFilename, newFullName);
+        return newFullName;
     }
 
     /// <summary>

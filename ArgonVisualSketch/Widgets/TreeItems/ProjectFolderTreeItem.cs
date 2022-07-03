@@ -1,8 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using ArgonVisual.Helpers;
+using ArgonVisual.Views;
 using ArgonVisual.Widgets;
 
 namespace ArgonVisual.TreeItems;
@@ -51,7 +55,7 @@ public class ProjectFolderTreeItem : ArgonTreeItem
     protected override string? IsValidName(string name)
     {
         if (DirectoryInfo.Parent is not null
-         && DirectoryInfo.Parent.GetDirectories().Any((info) => info.Name == name))
+         && DirectoryInfo.Parent.GetDirectories().Any((info) => info.Name.Equals(name, StringComparison.Ordinal)))
         {
             return $"A folder named \"{name}\" already exists.";
         }
@@ -75,7 +79,16 @@ public class ProjectFolderTreeItem : ArgonTreeItem
 
     private void AddNewCodeFile()
     {
+        Items.Add(CodeFileTreeItem.CreateNewCodeFileInDirectory(DirectoryInfo, Editor));
+    }
 
+    protected override void OnSelected(RoutedEventArgs e)
+    {
+        DocumentEditorView? documentView = Editor.FindView<DocumentEditorView>();
+        if (documentView is not null)
+        {
+            documentView.ShowCodeFile(null);
+        }
     }
 
     protected override ImageSource GetIcon() => ArgonStyle.Icons.Folder;

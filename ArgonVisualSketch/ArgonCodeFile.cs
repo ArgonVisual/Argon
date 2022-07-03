@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Argon.Helpers;
+using ArgonVisual.DocumentItems;
+using ArgonVisual.Helpers;
 
 namespace ArgonVisual;
 
@@ -12,7 +15,7 @@ public class ArgonCodeFile
     /// <summary>
     /// The serialization version for a <see cref="ArgonCodeFile"/>.
     /// </summary>
-    public enum Version
+    public enum Version : byte
     {
         BlankVersion,
 
@@ -20,12 +23,20 @@ public class ArgonCodeFile
         Latest = Last - 1
     }
 
+    /// <summary>
+    /// The name of this code file
+    /// </summary>
     public string Name => FileInfo.Name.SubstringBeforeLast('.');
 
     /// <summary>
     /// The file on disk that represents this code file.
     /// </summary>
-    public FileInfo FileInfo { get; }
+    public FileInfo FileInfo { get; private set; }
+
+    /// <summary>
+    /// All the types defined in this file
+    /// </summary>
+    public List<ArgonUserDefinedType> DefinedTypes { get; }
 
     /// <summary>
     /// Initializes a new instance of <see cref="ArgonCodeFile"/> with <paramref name="fileInfo"/>.
@@ -34,20 +45,21 @@ public class ArgonCodeFile
     private ArgonCodeFile(FileInfo fileInfo)
     {
         FileInfo = fileInfo;
+        DefinedTypes = new List<ArgonUserDefinedType>();
     }
 
     public static ArgonCodeFile Create(FileInfo fileInfo)
     {
-        ArgonCodeFile newProject = new ArgonCodeFile(fileInfo);
-        Save(newProject);
-        return newProject;
+        ArgonCodeFile newCodeFile = new ArgonCodeFile(fileInfo);
+        Save(newCodeFile);
+        return newCodeFile;
     }
 
     /// <summary>
     /// Reads an <see cref="ArgonCodeFile"/> from <paramref name="fileInfo"/>.
     /// </summary>
     /// <param name="fileInfo">The file on disk to read.</param>
-    /// <returns>The read project</returns>
+    /// <returns>The read code file.</returns>
     /// <exception cref="ArgumentException">The file must exist.</exception>
     public static ArgonCodeFile Read(FileInfo fileInfo)
     {
@@ -56,17 +68,26 @@ public class ArgonCodeFile
             throw new ArgumentException("Codo file to read must exist", nameof(fileInfo));
         }
 
-        ArgonCodeFile newCodeFile = new ArgonCodeFile(fileInfo);
+        ArgonCodeFile codeFile = new ArgonCodeFile(fileInfo);
+
+        Version version = Version.Latest;
 
         using (FileStream fileStream = fileInfo.OpenRead())
         {
             using (BinaryReader binaryReader = new BinaryReader(fileStream))
             {
+                version = (Version)binaryReader.ReadByte();
 
+                binaryReader.ReadArray(codeFile.DefinedTypes, () => ArgonUserDefinedType.Read(binaryReader));
             }
         }
 
-        return newCodeFile;
+        if (version != Version.Latest)
+        {
+            Save(codeFile);
+        }
+
+        return codeFile;
     }
 
     /// <summary>
@@ -79,24 +100,18 @@ public class ArgonCodeFile
         {
             using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
             {
-
+                binaryWriter.Write((byte)Version.Latest);
+                binaryWriter.WriteArray(codeFile.DefinedTypes, (item) => item.Write(binaryWriter));
             }
         }
     }
 
     /// <summary>
-    /// Gets the relative path from <paramref name="solution"/> to this project.
+    /// Renames the code file
     /// </summary>
-    /// <param name="solution">The solution to get the relative path from.</param>
-    /// <returns>The relative path.</returns>
-    /// <exception cref="ArgumentException">The solution must have a parent directory.</exception>
-    public string GetRelativePathToSolution(ArgonSolution solution)
+    /// <param name="newName">The new name of the file without the extension</param>
+    public void Rename(string newName) 
     {
-        if (solution.FileInfo.Directory is null)
-        {
-            throw new ArgumentException("Solution must have a parent directory", nameof(solution));
-        }
-
-        return Path.GetRelativePath(solution.FileInfo.Directory.FullName, FileInfo.FullName);
+        FileInfo = new FileInfo(PathHelper.RenameFile(FileInfo.FullName, newName + ArgonFileExtensions.CodeFile));
     }
 }

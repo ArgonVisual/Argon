@@ -67,17 +67,24 @@ public class ArgonProject
             throw new ArgumentException("Project to read must exist", nameof(fileInfo));
         }
 
-        ArgonProject newProject = new ArgonProject(fileInfo);
+        ArgonProject project = new ArgonProject(fileInfo);
+
+        Version version = Version.Latest;
 
         using (FileStream fileStream = fileInfo.OpenRead())
         {
             using (BinaryReader binaryReader = new BinaryReader(fileStream))
             {
-
+                version = (Version)binaryReader.ReadByte();
             }
         }
 
-        return newProject;
+        if (version != Version.Latest)
+        {
+            Save(project);
+        }
+
+        return project;
     }
 
     public static void Save(ArgonProject project) 
@@ -86,7 +93,7 @@ public class ArgonProject
         {
             using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
             {
-
+                binaryWriter.Write((byte)Version.Latest);
             }
         }
     }

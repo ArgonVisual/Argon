@@ -75,24 +75,33 @@ public class ArgonSolution
             throw new ArgumentException("Project to read must exist", nameof(fileInfo));
         }
 
-        ArgonSolution newSolution = new ArgonSolution(fileInfo);
+        ArgonSolution solution = new ArgonSolution(fileInfo);
+
+        Version version = Version.Latest;
 
         using (FileStream fileStream = fileInfo.OpenRead())
         {
             using (BinaryReader binaryReader = new BinaryReader(fileStream))
             {
+                version = (Version)binaryReader.ReadByte();
+
                 byte projectsCount = binaryReader.ReadByte();
                 string rootPath = fileInfo.Directory.FullName;
                 
                 for (int i = 0; i < projectsCount; i++)
                 {
                     string relativePath = binaryReader.ReadString();
-                    newSolution._projects.Add(ArgonProject.Read(new FileInfo(Path.GetFullPath(relativePath, rootPath))));
+                    solution._projects.Add(ArgonProject.Read(new FileInfo(Path.GetFullPath(relativePath, rootPath))));
                 }
             }
         }
 
-        return newSolution;
+        if (version != Version.Latest)
+        {
+            Save(solution);
+        }
+
+        return solution;
     }
 
     /// <summary>
@@ -105,6 +114,8 @@ public class ArgonSolution
         {
             using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
             {
+                binaryWriter.Write((byte)Version.Latest);
+
                 binaryWriter.Write((byte)solution._projects.Count);
                 for (int i = 0; i < solution._projects.Count; i++)
                 {

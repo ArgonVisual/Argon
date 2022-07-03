@@ -13,6 +13,18 @@ namespace ArgonVisual.Widgets;
 /// </summary>
 public class SimpleInlineEditableTextBox : ContentControl
 {
+    public new double FontSize 
+    {
+        get => _textBox.FontSize;
+        set => _textBox.FontSize = _textBlock.FontSize = value;
+    }
+
+    public new FontFamily FontFamily 
+    {
+        get => _textBox.FontFamily;
+        set => _textBox.FontFamily = _textBlock.FontFamily = value;
+    }
+
     public string Text 
     {
         get => _textBox.Text;
