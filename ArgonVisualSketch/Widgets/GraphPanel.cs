@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using ArgonVisual.Widgets;
+using ArgonVisual.Widgets.Nodes;
 
 namespace ArgonVisual;
 
@@ -13,27 +16,94 @@ public class GraphPanel : Border
     public const double GridSize = 50;
     public const double HalfGridSize = GridSize / 2;
 
-    public Point GraphOffset;
+    private bool _isPanning;
+    private Point _mouseStartPanning;
+    private Point _nodeBrowserPosition;
+
+    private const double _mouseBeginPanning = 20;
+
+    public Point CurrentGraphScreenOffset;
+    public Point LastGraphScreenOffset;
+
+    // The node browser that is currently being shown
+    private NodeBrowser _nodeBrowser;
+
+    private Popup _nodeBrowserPopup;
+
+    private Grid _mainGrid;
 
     public GraphPanel() 
     {
-        Grid grid = new Grid();
+        _mainGrid = new Grid();
 
         CornerRadius = new CornerRadius(10);
 
         Background = BrushHelper.MakeSolidBrush(20, 20, 25);
         ClipToBounds = true;
 
-        grid.Children.Add(_nodesCanvas = new Canvas());
+        _mainGrid.Children.Add(_nodesCanvas = new Canvas());
 
-        Child = grid;
+        _nodeBrowserPopup = new Popup();
+        _nodeBrowserPopup.Placement = PlacementMode.MousePoint;
+        _mainGrid.Children.Add(_nodeBrowserPopup);
+
+        _nodeBrowser = new NodeBrowser(this, SpawnNodeFromBrowser);
+        _nodeBrowserPopup.Child = _nodeBrowser;
+
+        Child = _mainGrid;
+    }
+
+    private void SpawnNodeFromBrowser(GraphNodePreview graphNode)
+    {
+        AddNode(graphNode, new Point(_nodeBrowserPosition.X - LastGraphScreenOffset.X, _nodeBrowserPosition.Y - LastGraphScreenOffset.Y));
     }
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
-        // InvalidateVisual();
-        // Point mousePosition = Mouse.GetPosition(this);
-        // GraphOffset = mousePosition;
+        if (_isPanning && Point.Subtract(Mouse.GetPosition(this), _mouseStartPanning).LengthSquared >= _mouseBeginPanning)
+        {
+            Point mousePosition = Mouse.GetPosition(this);
+            CurrentGraphScreenOffset = new Point(mousePosition.X - _mouseStartPanning.X + LastGraphScreenOffset.X, mousePosition.Y - _mouseStartPanning.Y + LastGraphScreenOffset.Y);
+            _nodesCanvas.Margin = new Thickness(CurrentGraphScreenOffset.X, CurrentGraphScreenOffset.Y, 0, 0);
+            InvalidateVisual();
+        }
+    }
+
+    protected override void OnMouseDown(MouseButtonEventArgs e)
+    {
+        _nodeBrowserPopup.IsOpen = false;
+
+        if (e.ChangedButton == MouseButton.Right)
+        {
+            _isPanning = true;
+            _mouseStartPanning = Mouse.GetPosition(this);
+        }
+    }
+
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+        _isPanning = false;
+
+        Point mousePosition = Mouse.GetPosition(this);
+        if (e.ChangedButton == MouseButton.Right && Point.Subtract(mousePosition, _mouseStartPanning).LengthSquared < _mouseBeginPanning)
+        {
+            _nodeBrowserPopup.IsOpen = true;
+            _nodeBrowserPosition = mousePosition;
+        }
+
+        LastGraphScreenOffset = CurrentGraphScreenOffset;
+    }
+
+    public void HideNodeBrowser() 
+    {
+        _nodeBrowserPopup.IsOpen = false;
+    }
+
+    public void AddNode(GraphNodePreview nodeToAdd, Point position) 
+    {
+        Canvas.SetLeft(nodeToAdd, position.X);
+        Canvas.SetTop(nodeToAdd, position.Y);
+        _nodesCanvas.Children.Add(nodeToAdd);
     }
 
     protected override void OnRender(DrawingContext dc)
@@ -42,10 +112,10 @@ public class GraphPanel : Border
 
         const double dotSize = 3;
 
-        double dotsXOffset = GraphOffset.X - Math.Floor(GraphOffset.X / GridSize) * GridSize - GridSize;
+        double dotsXOffset = CurrentGraphScreenOffset.X - Math.Floor(CurrentGraphScreenOffset.X / GridSize) * GridSize - GridSize;
         int horizontalDotsNum = (int)(ActualWidth / GridSize) + 3;
 
-        double dotsYOffset = GraphOffset.Y - Math.Floor(GraphOffset.Y / GridSize) * GridSize - GridSize;
+        double dotsYOffset = CurrentGraphScreenOffset.Y - Math.Floor(CurrentGraphScreenOffset.Y / GridSize) * GridSize - GridSize;
         int verticalDotsnum = (int)(ActualHeight / GridSize) + 3;
 
         // const double margin = 8;

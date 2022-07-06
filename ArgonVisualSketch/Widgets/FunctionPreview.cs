@@ -1,36 +1,51 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using ArgonVisual.Views;
 
 namespace ArgonVisual.Widgets;
 
 public class FunctionPreview : Border
 {
-    private bool _isSelected;
-
     public bool IsSelected
     {
-        get => _isSelected;
-        set
-        {
-            Background = value ? _selectedBackground : _normalBackground;
-            _isSelected = value;
-        }
+        get => FunctionsView.SelectedFunctionPreview == this;
     }
 
     private static Brush _normalBackground = BrushHelper.MakeSolidBrush(40, 40, 45);
-    private static Brush _selectedBackground = BrushHelper.MakeSolidBrush(60, 60, 65);
+    private static Brush _hoverBackground = BrushHelper.MakeSolidBrush(60, 60, 65);
+    private static Brush _selectedBackground = BrushHelper.MakeSolidBrush(80, 80, 85);
 
-    public FunctionPreview()
+    private FunctionNameEditableText _nameText;
+
+    /// <summary>
+    /// The function that this widget is representing.
+    /// </summary>
+    public ArgonFunction Function { get; }
+
+    /// <summary>
+    /// The functions view that manages selecting
+    /// </summary>
+    public FunctionsView FunctionsView { get; }
+
+    public FunctionPreview(ArgonFunction function, FunctionsView functionsView)
     {
+        Function = function;
+        FunctionsView = functionsView;
+
         Background = _normalBackground;
         HorizontalAlignment = HorizontalAlignment.Left;
 
         Margin = new Thickness(15, 16, 6, 0);
 
         CornerRadius = new CornerRadius(12);
+
+        ContextMenu contextMenu = new ContextMenu();
+        contextMenu.Items.Add(new TextMenuItem("Rename", Rename));
+        ContextMenu = contextMenu;
 
         StackPanel mainPanel = new StackPanel();
 
@@ -56,29 +71,71 @@ public class FunctionPreview : Border
 
         mainPanel.Children.Add(topPanel);
 
-        mainPanel.Children.Add(new TextBlock()
+        mainPanel.Children.Add(_nameText = new FunctionNameEditableText()
         {
-            Text = "This is my function",
-            TextWrapping = TextWrapping.Wrap,
-            TextAlignment = TextAlignment.Left,
+            Text = function.Name,
             VerticalAlignment = VerticalAlignment.Top,
             FontSize = 22,
             Margin = new Thickness(8, -2, 8, 6)
         });
 
+        _nameText.TextCommitted += HandleNameChanged;
+
         Child = mainPanel;
+    }
+
+    private void HandleNameChanged(string oldName, string newName)
+    {
+        Function.Name = newName;
+    }
+
+    public void Rename()
+    {
+        _nameText.EnterEditMode();
     }
 
     protected override void OnMouseEnter(MouseEventArgs e)
     {
-        Background = _selectedBackground;
+        Background = _hoverBackground;
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
-        if (!_isSelected)
+        if (!IsSelected)
         {
             Background = _normalBackground;
+        }
+    }
+
+    public void RefreshAppearance() 
+    {
+        if (IsSelected)
+        {
+            Background = _selectedBackground;
+        }
+        else
+        {
+            Background = _normalBackground;
+        }
+    }
+
+    public void Select() 
+    {
+        // Select this functionand update its appearance.
+        FunctionsView.SelectedFunctionPreview = this;
+        RefreshAppearance();
+    }
+
+    protected override void OnMouseDown(MouseButtonEventArgs e)
+    {
+        FunctionPreview? beforeSelectedFunction = FunctionsView.SelectedFunctionPreview;
+
+        Select();
+
+        // Refresh the appearance of the function that was selected before
+        if (beforeSelectedFunction is not null)
+        {
+            beforeSelectedFunction.RefreshAppearance();
         }
     }
 }

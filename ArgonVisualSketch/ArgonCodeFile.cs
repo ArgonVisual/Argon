@@ -18,6 +18,7 @@ public class ArgonCodeFile
     public enum Version : byte
     {
         BlankVersion,
+        SerializeFunctions,
 
         Last,
         Latest = Last - 1
@@ -36,7 +37,7 @@ public class ArgonCodeFile
     /// <summary>
     /// All the types defined in this file
     /// </summary>
-    public List<ArgonUserDefinedType> DefinedTypes { get; }
+    public List<ArgonClass> DefinedTypes { get; }
 
     /// <summary>
     /// Initializes a new instance of <see cref="ArgonCodeFile"/> with <paramref name="fileInfo"/>.
@@ -45,7 +46,7 @@ public class ArgonCodeFile
     private ArgonCodeFile(FileInfo fileInfo)
     {
         FileInfo = fileInfo;
-        DefinedTypes = new List<ArgonUserDefinedType>();
+        DefinedTypes = new List<ArgonClass>();
     }
 
     public static ArgonCodeFile Create(FileInfo fileInfo)
@@ -78,7 +79,7 @@ public class ArgonCodeFile
             {
                 version = (Version)binaryReader.ReadByte();
 
-                binaryReader.ReadArray(codeFile.DefinedTypes, () => ArgonUserDefinedType.Read(binaryReader));
+                binaryReader.ReadArray(codeFile.DefinedTypes, () => ArgonClass.Read(binaryReader, version));
             }
         }
 

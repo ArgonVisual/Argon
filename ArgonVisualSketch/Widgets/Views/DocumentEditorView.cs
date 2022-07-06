@@ -20,6 +20,8 @@ public class DocumentEditorView : ViewBase
 
     private StackPanel _definedTypesPanel;
 
+    public ArgonClassPreview? SelectedClassPreview { get; private set; }
+
     public DocumentEditorView(SolutionEditor solutionEditor) : base(solutionEditor)
     {
         _grid = new Grid();
@@ -57,10 +59,23 @@ public class DocumentEditorView : ViewBase
     {
         if (ShownCodeFile is not null)
         {
-            ArgonUserDefinedType definedType = new ArgonUserDefinedType("MyClass");
+            ArgonClass definedType = new ArgonClass("MyClass");
             ShownCodeFile.DefinedTypes.Add(definedType);
-            _definedTypesPanel.Children.Add(new UserDefinedTypePreview(definedType));
+            _definedTypesPanel.Children.Add(new ArgonClassPreview(definedType, this));
         }
+    }
+
+    public void SelectClassPreview(ArgonClassPreview classPreview) 
+    {
+        if (SelectedClassPreview is not null)
+        {
+            SelectedClassPreview.Deselect();
+        }
+
+        SelectedClassPreview = classPreview;
+        SelectedClassPreview.Select();
+
+        Editor.FindView<FunctionsView>()?.ShowFunctionsForClass(classPreview.Class);
     }
 
     protected override FrameworkElement GetBodyContent()
@@ -87,9 +102,15 @@ public class DocumentEditorView : ViewBase
         if (codeFile is not null)
         {
             _titleText.Text = codeFile.Name;
-            foreach (ArgonUserDefinedType definedType in codeFile.DefinedTypes)
+            for (int i = 0; i < codeFile.DefinedTypes.Count; i++)
             {
-                _definedTypesPanel.Children.Add(new UserDefinedTypePreview(definedType));
+                ArgonClass definedType = codeFile.DefinedTypes[i];
+                ArgonClassPreview definedTypePreview = new ArgonClassPreview(definedType, this);
+                if (i == 0)
+                {
+                    SelectClassPreview(definedTypePreview);
+                }
+                _definedTypesPanel.Children.Add(definedTypePreview);
             }
         }
         else

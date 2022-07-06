@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -11,24 +12,24 @@ namespace ArgonVisual.Widgets;
 /// <summary>
 /// Represents a text box that can be edited.
 /// </summary>
-public class SimpleInlineEditableTextBox : ContentControl
+public class EditableText : ContentControl
 {
     public new double FontSize 
     {
-        get => _textBox.FontSize;
-        set => _textBox.FontSize = _textBlock.FontSize = value;
+        get => TextBox.FontSize;
+        set => TextBox.FontSize = TextBlock.FontSize = value;
     }
 
     public new FontFamily FontFamily 
     {
-        get => _textBox.FontFamily;
-        set => _textBox.FontFamily = _textBlock.FontFamily = value;
+        get => TextBox.FontFamily;
+        set => TextBox.FontFamily = TextBlock.FontFamily = value;
     }
 
-    public string Text 
+    public virtual string Text 
     {
-        get => _textBox.Text;
-        set => _textBox.Text = _textBlock.Text = value;
+        get => TextBox.Text;
+        set => TextBox.Text = TextBlock.Text = value;
     }
 
     /// <summary>
@@ -36,28 +37,35 @@ public class SimpleInlineEditableTextBox : ContentControl
     /// </summary>
     public Action<string, string>? TextCommitted;
 
-    private TextBox _textBox;
-    private TextBlock _textBlock;
+    protected TextBox TextBox;
+    protected TextBlock TextBlock;
+
+    private Action<string, InlineCollection>? _createInlinesFromText;
 
     /// <summary>
-    /// Initializes a new intance of <see cref="SimpleInlineEditableTextBox"/>.
+    /// Initializes a new intance of <see cref="EditableText"/>.
     /// </summary>
-    public SimpleInlineEditableTextBox() 
+    public EditableText() 
     {
-        _textBox = new TextBox()
+        TextBox = new TextBox()
         {
             Foreground = Brushes.Black,
             FontSize = 15
         };
 
-        _textBox.LostFocus += HandleLostFocus;
+        TextBox.LostFocus += HandleLostFocus;
 
-        _textBlock = new TextBlock()
+        TextBlock = new TextBlock()
         {
             FontSize = 15
         };
 
         ExitEditMode();
+    }
+
+    protected EditableText(Action<string, InlineCollection>? createInlinesFromText) : this() 
+    {
+        _createInlinesFromText = createInlinesFromText;
     }
 
     private void HandleLostFocus(object sender, RoutedEventArgs e)
@@ -70,19 +78,18 @@ public class SimpleInlineEditableTextBox : ContentControl
     /// </summary>
     public void EnterEditMode()
     {
-        _textBox.Text = _textBlock.Text;
-        Content = _textBox;
+        Content = TextBox;
     }
 
     protected override void OnContentChanged(object oldContent, object newContent)
     {
-        if (newContent == _textBox)
+        if (newContent == TextBox)
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Input,
                 new Action(delegate () {
-                    _textBox.Focus();         // Set Logical Focus
-                    Keyboard.Focus(_textBox); // Set Keyboard Focus
-                    _textBox.SelectAll();
+                    TextBox.Focus();         // Set Logical Focus
+                    Keyboard.Focus(TextBox); // Set Keyboard Focus
+                    TextBox.SelectAll();
                 }));
         }
     }
@@ -93,9 +100,21 @@ public class SimpleInlineEditableTextBox : ContentControl
     /// <returns>The text before the text was changed.</returns>
     public string ExitEditMode() 
     {
-        string beforeName = _textBlock.Text;
-        _textBlock.Text = _textBox.Text;
-        Content = _textBlock;
+        string beforeName = TextBlock.Text;
+
+        Text = TextBox.Text;
+
+        if (_createInlinesFromText is not null)
+        {
+            TextBlock.Inlines.Clear();
+            _createInlinesFromText(Text, TextBlock.Inlines);
+        }
+        else
+        {
+            TextBlock.Text = Text;
+        }
+        
+        Content = TextBlock;
         return beforeName;
     }
 

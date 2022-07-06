@@ -18,7 +18,7 @@ public abstract class ArgonTreeItem : TreeViewItem
         set => _titleText.Text = value;
     }
 
-    private SimpleInlineEditableTextBox _titleText;
+    private EditableText _titleText;
 
     public SolutionEditor Editor;
 
@@ -47,7 +47,7 @@ public abstract class ArgonTreeItem : TreeViewItem
             Margin = new Thickness(3, 3, 6, 3)
         });
 
-        stackPanel.Children.Add(_titleText = new SimpleInlineEditableTextBox()
+        stackPanel.Children.Add(_titleText = new EditableText()
         {
             Text = title,
             FontSize = 18,
