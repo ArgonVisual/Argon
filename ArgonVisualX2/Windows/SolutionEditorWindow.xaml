@@ -19,8 +19,8 @@
 
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="200"/>
-                <RowDefinition/>
+                <RowDefinition Height=".30*"/>
+                <RowDefinition Height=".70*"/>
             </Grid.RowDefinitions>
 
             <views:SolutionView x:Name="SolutionView" Grid.Row="0" SolutionName="UnrealEngine"/>

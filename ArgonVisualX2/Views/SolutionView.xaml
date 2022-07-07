@@ -9,25 +9,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <main:ViewControl Title="Solution">
         <TreeView>
-            <TreeViewItem Header="MyFolder">
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
-                <TreeViewItem Header="MyArgonSolution"/>
+            <TreeViewItem Header="MyArgonSolution" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:SolutionView, Mode=FindAncestor}, Path=TreeItems}">
+                
             </TreeViewItem>
-            <TreeViewItem Header="MyArgonSolution"/>
         </TreeView>
     </main:ViewControl>
 </UserControl>

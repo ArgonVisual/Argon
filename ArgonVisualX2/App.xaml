@@ -3,6 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:ArgonVisualX2"
              xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+             xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
+             xmlns:adonisControls="clr-namespace:AdonisUI.Controls;assembly=AdonisUI"
+             xmlns:adonisConverters="clr-namespace:AdonisUI.Converters;assembly=AdonisUI"
              Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
@@ -13,6 +16,20 @@
 
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static adonisUi:Brushes.ForegroundBrush}}"></Setter>
+            </Style>
+
+            <Style TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemStyle}">
+                <Setter Property="HeaderTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image x:Name="TreeItemImage" Source="{Binding Icon}" Height="18"></Image>
+                                <TextBlock x:Name="TreeItemName" Text="{Binding Path=HeaderName}" Margin="5,0" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemsSource" Value="{Binding Path=TreeItems}"></Setter>
             </Style>
         </ResourceDictionary>
     </Application.Resources>
