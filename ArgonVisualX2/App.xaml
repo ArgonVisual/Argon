@@ -18,7 +18,11 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static adonisUi:Brushes.ForegroundBrush}}"></Setter>
             </Style>
 
-            <Style TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemStyle}">
+            <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxDefaultStyle}">
+                <Setter Property="FontSize" Value="15"></Setter>
+            </Style>
+            
+            <Style x:Key="ArgonTreeItemStyle" TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemStyle}">
                 <Setter Property="HeaderTemplate">
                     <Setter.Value>
                         <DataTemplate>
@@ -31,6 +35,8 @@
                 </Setter>
                 <Setter Property="ItemsSource" Value="{Binding Path=TreeItems}"></Setter>
             </Style>
+
+            <Style TargetType="TreeViewItem" BasedOn="{StaticResource ArgonTreeItemStyle}"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

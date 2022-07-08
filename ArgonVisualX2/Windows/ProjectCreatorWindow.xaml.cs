@@ -10,23 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ArgonVisualX2;
+namespace ArgonVisualX2.Windows;
 /// <summary>
-/// Interaction logic for TitledTextBox.xaml
+/// Interaction logic for ProjectCreatorWindow.xaml
 /// </summary>
-public partial class TitledTextBox : UserControl
+public partial class ProjectCreatorWindow : Window
 {
-    public TitledTextBox()
+    public ProjectCreatorWindow()
     {
         InitializeComponent();
     }
-
-    public string Title { get; set; }
-
-    public string Text { get; set; }
-
-    public int MaxLength { get; set; }
 }

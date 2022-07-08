@@ -9,13 +9,12 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <main:ViewControl Title="Project">
         <TreeView>
-            <TreeViewItem Header="MyProject">
-                <TreeViewItem Header="MyFolder">
-                    <TreeViewItem Header="MyCodeFile"/>
-                    <TreeViewItem Header="MySpecialCodeFile"/>
-                </TreeViewItem>
-                <TreeViewItem Header="MyOtherCodeFile"/>
-            </TreeViewItem>
+            <TreeViewItem 
+                Header="{Binding RelativeSource={RelativeSource AncestorType=local:ProjectView, Mode=FindAncestor}, Path=ProjectName}" 
+                FontSize="15"
+                IsSelected="True"
+                IsExpanded="True"
+                ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:ProjectView, Mode=FindAncestor}, Path=TreeItems}"/>
         </TreeView>
     </main:ViewControl>
 </UserControl>

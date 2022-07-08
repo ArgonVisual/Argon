@@ -4,24 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ArgonVisualX2"
-             mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Label Content="{Binding Title}" />
-        <Label Grid.Column="1">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding ElementName=txtLimitedInput, Path=Text.Length}" />
-                <TextBlock Text="/" />
-                <TextBlock Text="{Binding MaxLength}" />
-            </StackPanel>
-        </Label>
+             mc:Ignorable="d"
+             Margin="10">
+    <StackPanel>
+        <Label 
+            Content="{Binding RelativeSource={RelativeSource AncestorType=local:TitledTextBox, Mode=FindAncestor}, Path=Title}" 
+            FontSize="15"
+            Margin="5"/>
         <TextBox MaxLength="{Binding MaxLength}" Grid.Row="1" Grid.ColumnSpan="2" Name="txtLimitedInput" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" />
-    </Grid>
+    </StackPanel>
 </UserControl>

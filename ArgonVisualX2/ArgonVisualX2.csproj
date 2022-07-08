@@ -14,9 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Icons\ArgonProject.png"/>
-    <Resource Include="Icons\CodeFile.png"/>
-    <Resource Include="Icons\Folder.png"/>
+    <Resource Include="Icons\ArgonProject.png" />
+    <Resource Include="Icons\CodeFile.png" />
+    <Resource Include="Icons\Folder.png" />
   </ItemGroup>
 
 </Project>
