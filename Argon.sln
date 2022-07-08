@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArgonVertical", "ArgonVerti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArgonVisual", "ArgonVisualSketch\ArgonVisual.csproj", "{DB4920E4-319A-4C61-861C-7B04FEE32D48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgonVisualX2", "ArgonVisualX2\ArgonVisualX2.csproj", "{19E04759-14C2-48C2-A2F9-E3CE5FECFA2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArgonVisualX2", "ArgonVisualX2\ArgonVisualX2.csproj", "{19E04759-14C2-48C2-A2F9-E3CE5FECFA2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

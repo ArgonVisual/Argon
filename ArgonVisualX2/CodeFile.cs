@@ -19,17 +19,22 @@ public class CodeFile : ArgonFile
         {
             throw new ArgumentException("Cannot create a solution that already exists");
         }
-        return new CodeFile(new FileInfo(filename));
+        CodeFile codeFile = new CodeFile(new FileInfo(filename));
+        codeFile.Save();
+        return codeFile;
     }
 
     public static CodeFile Read(FileInfo fileInfo)
     {
-        CodeFile solution = new CodeFile(fileInfo);
-
-        return solution;
+        return ReadStatic(new CodeFile(fileInfo));
     }
 
-    public void Save()
+    protected override void WriteInternal(ArgonBinaryWriter writer)
+    {
+
+    }
+
+    protected override void ReadInternal(ArgonBinaryReader writer)
     {
 
     }

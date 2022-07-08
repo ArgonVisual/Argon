@@ -19,14 +19,24 @@ namespace ArgonVisualX2;
 /// </summary>
 public partial class TitledTextBox : UserControl
 {
+    public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(TitledTextBox));
+
+    public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof(string), typeof(TitledTextBox));
+
+    public string Title
+    {
+        get => (string)GetValue(TitleProperty);
+        set => SetValue(TitleProperty, value);
+    }
+
+    public string Text
+    {
+        get => (string)GetValue(TextProperty);
+        set => SetValue(TextProperty, value);
+    }
+
     public TitledTextBox()
     {
         InitializeComponent();
     }
-
-    public string Title { get; set; }
-
-    public string Text { get; set; }
-
-    public int MaxLength { get; set; }
 }

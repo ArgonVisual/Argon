@@ -8,12 +8,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <main:ViewControl Title="Solution">
-        <TreeView>
+        <TreeView SelectedItemChanged="TreeItemSelectionChanged">
             <TreeViewItem
                 Header="{Binding RelativeSource={RelativeSource AncestorType=local:SolutionView, Mode=FindAncestor}, Path=SolutionName}"
                 FontSize="15"
                 IsSelected="True"
                 IsExpanded="True"
+                Selected="SolutionItemSelected"
                 ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:SolutionView, Mode=FindAncestor}, Path=TreeItems}">
             </TreeViewItem>
         </TreeView>

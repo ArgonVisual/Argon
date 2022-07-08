@@ -1,18 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ArgonVisualX2.Windows;
 
 namespace ArgonVisualX2.Views;
 /// <summary>
@@ -20,6 +9,8 @@ namespace ArgonVisualX2.Views;
 /// </summary>
 public partial class SolutionView : UserControl
 {
+    public static SolutionView Global => SolutionEditor.Global?.SolutionView ?? throw new NullReferenceException("SolutionView has not been instanced.");
+
     public string SolutionName { get; set; }
 
     public List<ArgonTreeItem> TreeItems { get; }
@@ -30,20 +21,31 @@ public partial class SolutionView : UserControl
         this.DataContext = this;
 
         TreeItems = new List<ArgonTreeItem>();
+    }
 
-        TreeItems.Add(new ArgonProjectTreeItem("Minecraft"));
+    public void ShowSolution(SolutionFile solution) 
+    {
+        SolutionName = solution.Name;
 
-        ArgonProjectTreeItem fortniteTreeItem = new ArgonProjectTreeItem("Fortnite");
+        foreach (ProjectFile project in solution.Projects)
+        {
+            TreeItems.Add(new ArgonProjectTreeItem(project));
+        }
+    }
 
-        fortniteTreeItem.TreeItems.Add(new ArgonCodeFileTreeItem("Battle Royale"));
-        fortniteTreeItem.TreeItems.Add(new ArgonCodeFileTreeItem("Creative"));
-        fortniteTreeItem.TreeItems.Add(new ArgonCodeFileTreeItem("Save the World"));
+    private void TreeItemSelectionChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (e.NewValue is ArgonTreeItem argonTreeItem)
+        {
+            argonTreeItem.Select();
+        }
+    }
 
-        TreeItems.Add(fortniteTreeItem);
-        TreeItems.Add(new ArgonProjectTreeItem("Valorant"));
-        TreeItems.Add(new ArgonProjectTreeItem("Argon"));
-        TreeItems.Add(new ArgonFolderTreeItem("Roblox"));
-
-        TreeItems.Sort();
+    private void SolutionItemSelected(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (SolutionEditor.Global?.ProjectView is not null)
+        {
+            SolutionEditor.Global?.ProjectView.ShowProject(null);
+        }
     }
 }

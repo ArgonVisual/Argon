@@ -11,6 +11,6 @@
             Content="{Binding RelativeSource={RelativeSource AncestorType=local:TitledTextBox, Mode=FindAncestor}, Path=Title}" 
             FontSize="15"
             Margin="5"/>
-        <TextBox MaxLength="{Binding MaxLength}" Grid.Row="1" Grid.ColumnSpan="2" Name="txtLimitedInput" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" />
+        <TextBox Text="{Binding RelativeSource={RelativeSource AncestorType=local:TitledTextBox, Mode=FindAncestor}, Path=Text}" Grid.Row="1" Grid.ColumnSpan="2" Name="txtLimitedInput" ScrollViewer.VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" />
     </StackPanel>
 </UserControl>

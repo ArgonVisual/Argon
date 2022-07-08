@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ArgonVisualX2.Windows;
 
 namespace ArgonVisualX2.Views;
 /// <summary>
@@ -19,7 +10,23 @@ namespace ArgonVisualX2.Views;
 /// </summary>
 public partial class ProjectView : UserControl
 {
-    public string ProjectName { get; set; }
+    public static ProjectView Global => SolutionEditor.Global?.ProjectView ?? throw new NullReferenceException("ProjectView has not been instanced.");
+
+    public static readonly DependencyProperty ProjectNameProperty = DependencyProperty.Register("ProjectName", typeof(string), typeof(ProjectView));
+
+    public string ProjectName
+    {
+        get => (string)GetValue(ProjectNameProperty);
+        set => SetValue(ProjectNameProperty, value);
+    }
+
+    public static readonly DependencyProperty TreeViewVisibilityProperty = DependencyProperty.Register("TreeViewVisibility", typeof(Visibility), typeof(ProjectView), new PropertyMetadata(Visibility.Hidden));
+
+    public Visibility TreeViewVisibility
+    {
+        get => (Visibility)GetValue(TreeViewVisibilityProperty);
+        set => SetValue(TreeViewVisibilityProperty, value);
+    }
 
     public List<ArgonTreeItem> TreeItems { get; }
 
@@ -28,20 +35,15 @@ public partial class ProjectView : UserControl
         InitializeComponent();
 
         TreeItems = new List<ArgonTreeItem>();
+    }
 
-        TreeItems.Add(new ArgonProjectTreeItem("Minecraft"));
-
-        ArgonProjectTreeItem fortniteTreeItem = new ArgonProjectTreeItem("Fortnite");
-
-        fortniteTreeItem.TreeItems.Add(new ArgonCodeFileTreeItem("Battle Royale"));
-        fortniteTreeItem.TreeItems.Add(new ArgonCodeFileTreeItem("Creative"));
-        fortniteTreeItem.TreeItems.Add(new ArgonCodeFileTreeItem("Save the World"));
-
-        TreeItems.Add(fortniteTreeItem);
-        TreeItems.Add(new ArgonProjectTreeItem("Valorant"));
-        TreeItems.Add(new ArgonProjectTreeItem("Argon"));
-        TreeItems.Add(new ArgonFolderTreeItem("Roblox"));
-
-        TreeItems.Sort();
+    public void ShowProject(ProjectFile? project)
+    {
+        SolutionEditor.Global.SelectedProject = project;
+        TreeViewVisibility = project is not null ? Visibility.Visible : Visibility.Hidden;
+        if (project is not null)
+        {
+            ProjectName = project.Name;
+        }
     }
 }

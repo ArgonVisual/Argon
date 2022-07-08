@@ -16,9 +16,9 @@ namespace ArgonVisualX2.Windows;
 /// <summary>
 /// Interaction logic for ProjectCreatorWindow.xaml
 /// </summary>
-public partial class ProjectCreatorWindow : Window
+public partial class ProjectCreator : Window
 {
-    public ProjectCreatorWindow()
+    public ProjectCreator()
     {
         InitializeComponent();
     }

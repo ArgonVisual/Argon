@@ -1,4 +1,4 @@
-﻿<Window x:Class="ArgonVisualX2.Windows.SolutionPickerWindow"
+﻿<Window x:Class="ArgonVisualX2.Windows.SolutionPicker"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -25,13 +25,13 @@
 
                 </TextBlock>
 
-                <Button Margin="5, 15, 5, 5">
+                <Button Margin="5, 15, 5, 5" Click="OpenSolutionClicked">
                     <TextBlock Text="Open Solution"
                            Margin="10, 2, 10 ,2"
                            FontSize="15"/>
                 </Button>
 
-                <Button Margin="5, 5, 5, 15">
+                <Button Margin="5, 5, 5, 15" Click="OpenFolderClicked">
                     <TextBlock Text="Open Folder"
                            Margin="10, 2, 10 ,2"
                            FontSize="15"/>
@@ -56,7 +56,7 @@
                        FontSize="30"
                        HorizontalAlignment="Center"/>
 
-                <main:TitledTextBox Title="Name"/>
+                <main:TitledTextBox x:Name="SolutionName" Title="Name" Text="MySolution"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -64,8 +64,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <main:TitledTextBox Grid.Column="0" Title="Location"/>
-                    <Button Grid.Column="1" Height="30" VerticalAlignment="Bottom" Margin="0, 10, 10, 10">
+                    <main:TitledTextBox Grid.Column="0" x:Name="SolutionLocation" Title="Location"/>
+                    <Button Grid.Column="1" Click="OpenLocationBrowser" Height="30" VerticalAlignment="Bottom" Margin="0, 10, 10, 10">
                         <Image Source="/ArgonVisualX2;component/Icons/Folder.png"
                                VerticalAlignment="Center"/>
                     </Button>
@@ -74,7 +74,8 @@
 
             <Button Grid.Row="1"
                     Margin="20"
-                    HorizontalAlignment="Center">
+                    HorizontalAlignment="Center"
+                    Click="CreateSolutionClicked">
                 <TextBlock Text="Create"
                            Margin="10, 2, 10 ,2"
                            FontSize="30"/>

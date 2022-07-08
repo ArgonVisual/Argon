@@ -22,17 +22,33 @@ public class ProjectFile : ArgonFile
         {
             throw new ArgumentException("Cannot create a solution that already exists");
         }
-        return new ProjectFile(new FileInfo(filename));
+        ProjectFile project = new ProjectFile(new FileInfo(filename));
+        project.Save();
+        return project;
     }
 
     public static ProjectFile Read(FileInfo fileInfo)
     {
-        ProjectFile solution = new ProjectFile(fileInfo);
-
-        return solution;
+        return ReadStatic(new ProjectFile(fileInfo));
     }
 
-    public void Save()
+    public void WriteForSolution(ArgonBinaryWriter writer) 
+    {
+        writer.Write(FileInfo.FullName);
+    }
+
+    public static ProjectFile ReadForSolution(ArgonBinaryReader reader) 
+    {
+        string filename = reader.ReadString();
+        return ProjectFile.Read(new FileInfo(filename));
+    }
+
+    protected override void WriteInternal(ArgonBinaryWriter writer)
+    {
+
+    }
+
+    protected override void ReadInternal(ArgonBinaryReader writer)
     {
 
     }

@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ArgonVisualX2.Windows;
 
 namespace ArgonVisualX2.Views;
 /// <summary>
@@ -19,6 +8,8 @@ namespace ArgonVisualX2.Views;
 /// </summary>
 public partial class PropertiesView : UserControl
 {
+    public static PropertiesView Global => SolutionEditor.Global?.PropertiesView ?? throw new NullReferenceException("PropertiesView has not been instanced.");
+
     public PropertiesView()
     {
         InitializeComponent();

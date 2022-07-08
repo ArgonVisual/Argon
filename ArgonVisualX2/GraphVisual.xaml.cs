@@ -10,20 +10,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ArgonVisualX2.Windows;
+namespace ArgonVisualX2;
 /// <summary>
-/// Interaction logic for SolutionEditorWindow.xaml
+/// Interaction logic for GraphVisual.xaml
 /// </summary>
-public partial class SolutionEditorWindow : Window
+public partial class GraphVisual : UserControl
 {
-    private static SolutionEditorWindow? _global;
-    public static SolutionEditorWindow Global => _global ?? throw new NullReferenceException("SolutionEditorWindow has not been instanced.");
-
-    public SolutionEditorWindow()
+    public GraphVisual()
     {
         InitializeComponent();
-        _global = this;
     }
 }
