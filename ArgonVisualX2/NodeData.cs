@@ -8,9 +8,9 @@ public class NodeData
 
     public Point Position { get; set; }
 
-    public NodeData() 
+    public NodeData(string name) 
     {
-        Name = string.Empty;
+        Name = name;
     }
 
     public void Write(ArgonBinaryWriter writer) 
@@ -22,9 +22,9 @@ public class NodeData
 
     public static NodeData Read(ArgonBinaryReader reader) 
     {
-        NodeData node = new NodeData();
+        string name = reader.ReadString();
 
-        node.Name = reader.ReadString();
+        NodeData node = new NodeData(name);
 
         int x = reader.ReadInt32();
         int y = reader.ReadInt32();

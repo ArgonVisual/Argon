@@ -28,7 +28,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Image x:Name="TreeItemImage" Source="{Binding Icon}" Height="18"></Image>
-                                <TextBlock x:Name="TreeItemName" Text="{Binding Path=HeaderName}" Margin="5,0" VerticalAlignment="Center" FontSize="12"/>
+                                <TextBlock x:Name="TreeItemName" Text="{Binding Path=HeaderName}" Margin="5,0" VerticalAlignment="Center" FontSize="13.5"/>
                             </StackPanel>
                         </DataTemplate>
                     </Setter.Value>

@@ -11,10 +11,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <main:ViewControl Title="Functions">
-        <Grid>
-            <Button>
-                <TextBlock Text="This is the functions view!"></TextBlock>
-            </Button>
-        </Grid>
+        
     </main:ViewControl>
 </UserControl>

@@ -11,6 +11,17 @@ namespace ArgonVisualX2;
 
 public class NodePanel : Panel
 {
+    private static NodePanel? _global;
+    public static NodePanel Global => _global ?? throw new NullReferenceException("NodePanel has not been instanced.");
+
+    public static readonly DependencyProperty NodesOffsetProperty = DependencyProperty.Register("NodesOffset", typeof(Point), typeof(NodePanel), new FrameworkPropertyMetadata(new Point(0, 0), FrameworkPropertyMetadataOptions.AffectsArrange));
+
+    public Point NodesOffset
+    {
+        get => (Point)GetValue(NodesOffsetProperty);
+        set => SetValue(NodesOffsetProperty, value);
+    }
+
     static NodePanel()
     {
         ClipToBoundsProperty.OverrideMetadata(typeof(NodePanel), new PropertyMetadata(true));
@@ -20,7 +31,7 @@ public class NodePanel : Panel
     public NodePanel()
         : base()
     {
-
+        _global = this;
     }
 
     // Override the default Measure method of Panel
@@ -41,12 +52,10 @@ public class NodePanel : Panel
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        foreach (UIElement child in InternalChildren)
+        foreach (ContentPresenter child in InternalChildren)
         {
-            double x = 50;
-            double y = 50;
-
-            child.Arrange(new Rect(new Point(x, y), child.DesiredSize));
+            NodeData nodeData = (NodeData)child.Content;
+            child.Arrange(new Rect(new Point(nodeData.Position.X + NodesOffset.X, nodeData.Position.Y + NodesOffset.Y), child.DesiredSize));
         }
         return finalSize; // Returns the final Arranged size
     }
