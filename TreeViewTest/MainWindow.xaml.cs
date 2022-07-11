@@ -27,12 +27,12 @@ public partial class MainWindow : Window
 
         TreeItems = new List<TreeItem>();
 
-        TreeItem solution = new TreeItem("Solution");
-        TreeItem folder = new TreeItem("Folder");
-        folder.TreeItems.Add(new TreeItem("Project"));
-        folder.TreeItems.Add(new TreeItem("Project"));
+        SolutionTreeItem solution = new SolutionTreeItem("Solution");
+        FolderTreeItem folder = new FolderTreeItem("Folder");
+        folder.TreeItems.Add(new FileTreeItem("File"));
+        folder.TreeItems.Add(new FileTreeItem("File"));
         solution.TreeItems.Add(folder);
-        solution.TreeItems.Add(new TreeItem("Project"));
+        solution.TreeItems.Add(new FileTreeItem("File"));
 
         TreeItems.Add(solution);
     }
@@ -46,10 +46,39 @@ public class TreeItem
 
     public bool IsExpanded { get; set; }
 
+    public virtual string NodeType => "Base";
+
     public TreeItem(string name) 
     {
         Name = name;
         TreeItems = new List<TreeItem>();
         IsExpanded = true;
+    }
+}
+
+public class FolderTreeItem : TreeItem
+{
+    public override string NodeType => "Folder";
+
+    public FolderTreeItem(string name) : base(name)
+    {
+    }
+}
+
+public class FileTreeItem : TreeItem
+{
+    public override string NodeType => "File";
+
+    public FileTreeItem(string name) : base(name)
+    {
+    }
+}
+
+public class SolutionTreeItem : TreeItem
+{
+    public override string NodeType => "Solution";
+
+    public SolutionTreeItem(string name) : base(name)
+    {
     }
 }
