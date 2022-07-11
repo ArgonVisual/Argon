@@ -1,0 +1,23 @@
+﻿<Window x:Class="TreeViewTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:adonisUi="clr-namespace:AdonisUI;assembly=AdonisUI"
+        xmlns:local="clr-namespace:TreeViewTest"
+        mc:Ignorable="d"
+        Title="Argon Tree View Test" Height="450" Width="800"
+        Background="{DynamicResource {x:Static adonisUi:Brushes.Layer0BackgroundBrush}}">
+    <Grid>
+        <TreeView ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=local:MainWindow}, Path=TreeItems}">
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding TreeItems}" DataType="{x:Type local:TreeItem}">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Width="16" Height="16" Source="/TreeViewTest;component/Icons/Folder.png" Margin="0, 0, 5, 0"></Image>
+                        <TextBlock Text="{Binding Name}" FontSize="12"/>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </Grid>
+</Window>
