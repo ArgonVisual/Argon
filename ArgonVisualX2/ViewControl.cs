@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ArgonVisualX2;
 /// <summary>
@@ -33,13 +21,12 @@ public partial class ViewControl : UserControl
 
     public object ViewContent
     {
-        get => (string)GetValue(ViewContentProperty);
+        get => (object)GetValue(ViewContentProperty);
         set => SetValue(ViewContentProperty, value);
     }
 
     public ViewControl()
     {
         this.DataContext = this;
-        InitializeComponent();
     }
 }

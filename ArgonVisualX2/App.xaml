@@ -21,22 +21,48 @@
             <Style TargetType="TextBox" BasedOn="{StaticResource TextBoxDefaultStyle}">
                 <Setter Property="FontSize" Value="15"></Setter>
             </Style>
-            
-            <Style x:Key="ArgonTreeItemStyle" TargetType="TreeViewItem" BasedOn="{StaticResource TreeViewItemStyle}">
-                <Setter Property="HeaderTemplate">
-                    <Setter.Value>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Image x:Name="TreeItemImage" Source="{Binding Icon}" Height="18"></Image>
-                                <TextBlock x:Name="TreeItemName" Text="{Binding Path=HeaderName}" Margin="5,0" VerticalAlignment="Center" FontSize="13.5"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="ItemsSource" Value="{Binding Path=TreeItems}"></Setter>
+
+            <Style TargetType="local:ArgonTreeView">
+                <Setter Property="Background" Value="Transparent"></Setter>
+                <Setter Property="BorderBrush" Value="Transparent"></Setter>
             </Style>
 
-            <Style TargetType="TreeViewItem" BasedOn="{StaticResource ArgonTreeItemStyle}"/>
+            <Style TargetType="local:CustomTreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+
+            </Style>
+
+            <Style TargetType="local:ViewControl">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="local:ViewControl">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <Border 
+                                    Grid.Row="0" 
+                                    Background="{DynamicResource {x:Static adonisUi:Brushes.Layer3BorderBrush}}">
+                                    <TextBlock 
+                                        Text="{Binding Title}" 
+                                        FontSize="15"
+                                        Foreground="{DynamicResource {x:Static adonisUi:Brushes.ForegroundBrush}}"
+                                        Margin="5, 1, 5, 1"/>
+                                </Border>
+                                <Border 
+                                    Grid.Row="1" 
+                                    Background="{DynamicResource {x:Static adonisUi:Brushes.Layer3BackgroundBrush}}" 
+                                    Padding="5"
+                                    BorderBrush="{DynamicResource {x:Static adonisUi:Brushes.Layer3BorderBrush}}"
+                                    BorderThickness="3">
+                                    <ContentPresenter Content="{Binding ViewContent}"></ContentPresenter>
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -19,4 +19,9 @@ public partial class App : Application
         MainWindow = window;
         window.Show();
     }
+
+    private void RenameItem(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

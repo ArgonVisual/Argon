@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,18 +11,22 @@ using System.Windows.Xps.Serialization;
 using ArgonVisualX2.Views;
 
 namespace ArgonVisualX2;
+
+#if false
+
 public abstract class ArgonTreeItem : IComparable<ArgonTreeItem>
 {
     public string HeaderName { get; set; }
 
-    public abstract ImageSource Icon { get; }
-
     public List<ArgonTreeItem> TreeItems { get; }
+
+    public Visibility AddFolderVisibility { get; set; }
 
     public ArgonTreeItem(string headerName) 
     {
         HeaderName = headerName;
         TreeItems = new List<ArgonTreeItem>();
+        AddFolderVisibility = Visibility.Collapsed;
     }
 
     public int CompareTo(ArgonTreeItem? other)
@@ -36,48 +41,58 @@ public abstract class ArgonTreeItem : IComparable<ArgonTreeItem>
 
     public virtual void Select() 
     {
+        
+    }
+
+    public virtual void AddFolder() 
+    {
     
+    }
+
+    public virtual void Rename() 
+    {
+        
     }
 }
 
+#endif
 
-
-public class ArgonSolutionTreeItem : ArgonTreeItem
+public class ArgonSolutionTreeItem : CustomTreeViewItem
 {
     private static ImageSource _icon = new BitmapImage(new Uri("/ArgonVisualX2;component/Icons/ArgonProject.png", UriKind.Relative));
     public override ImageSource Icon => _icon;
 
-    public ArgonSolutionTreeItem(string headerName) : base(headerName)
+    public ArgonSolutionTreeItem(string headerName) : base()
     {
-        HeaderName = headerName;
+
     }
     
 }
 
-public class ArgonProjectTreeItem : ArgonTreeItem
+public class ArgonProjectTreeItem : CustomTreeViewItem
 {
     private static ImageSource _icon = new BitmapImage(new Uri("/ArgonVisualX2;component/Icons/ArgonProject.png", UriKind.Relative));
     public override ImageSource Icon => _icon;
 
     public ProjectFile Project { get; }
 
-    public ArgonProjectTreeItem(ProjectFile project) : base(project.Name)
+    public ArgonProjectTreeItem(ProjectFile project) : base()
     {
         Project = project;
     }
 
-    public override void Select()
+    protected override void OnSelected(RoutedEventArgs e)
     {
         ProjectView.Global.ShowProject(Project);
     }
 }
 
-public abstract class ArgonFolderTreeItem : ArgonTreeItem
+public abstract class ArgonFolderTreeItem : CustomTreeViewItem
 {
     private static ImageSource _icon = new BitmapImage(new Uri("/ArgonVisualX2;component/Icons/Folder.png", UriKind.Relative));
     public override ImageSource Icon => _icon;
 
-    public ArgonFolderTreeItem(string headerName) : base(headerName)
+    public ArgonFolderTreeItem() : base()
     {
 
     }
@@ -85,7 +100,7 @@ public abstract class ArgonFolderTreeItem : ArgonTreeItem
 
 public class ArgonProjectFolderTreeItem : ArgonFolderTreeItem
 {
-    public ArgonProjectFolderTreeItem(string headerName) : base(headerName)
+    public ArgonProjectFolderTreeItem(string headerName) : base()
     {
 
     }
@@ -93,23 +108,23 @@ public class ArgonProjectFolderTreeItem : ArgonFolderTreeItem
 
 public class ArgonSolutionFolderTreeItem : ArgonFolderTreeItem
 {
-    public ArgonSolutionFolderTreeItem(string headerName) : base(headerName)
+    public ArgonSolutionFolderTreeItem(string headerName) : base()
     {
 
     }
 
-    public override void Select()
+    protected override void OnSelected(RoutedEventArgs e)
     {
         ProjectView.Global.ShowProject(null);
     }
 }
 
-public class ArgonCodeFileTreeItem : ArgonTreeItem
+public class ArgonCodeFileTreeItem : CustomTreeViewItem
 {
     private static ImageSource _icon = new BitmapImage(new Uri("/ArgonVisualX2;component/Icons/CodeFile.png", UriKind.Relative));
     public override ImageSource Icon => _icon;
 
-    public ArgonCodeFileTreeItem(string headerName) : base(headerName)
+    public ArgonCodeFileTreeItem(string headerName) : base()
     {
 
     }

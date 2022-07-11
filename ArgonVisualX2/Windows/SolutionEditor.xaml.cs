@@ -34,6 +34,6 @@ public partial class SolutionEditor : Window
 
         InitializeComponent();
 
-        SolutionView.ShowSolution(solution);
+        // SolutionView.ShowSolution(solution);
     }
 }

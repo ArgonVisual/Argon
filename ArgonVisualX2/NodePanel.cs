@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ArgonVisualX2;
 
@@ -55,6 +56,16 @@ public class NodePanel : Panel
         foreach (ContentPresenter child in InternalChildren)
         {
             NodeData nodeData = (NodeData)child.Content;
+
+            if (nodeData.VisualNameText is null)
+            {
+                Border border = (Border)VisualTreeHelper.GetChild(child, 0);
+                object editableText = VisualTreeHelper.GetChild(border, 0);
+                // nodeData.VisualNameText = editableText;
+            }
+
+            nodeData.PopulateInlines();
+
             child.Arrange(new Rect(new Point(nodeData.Position.X + NodesOffset.X, nodeData.Position.Y + NodesOffset.Y), child.DesiredSize));
         }
         return finalSize; // Returns the final Arranged size

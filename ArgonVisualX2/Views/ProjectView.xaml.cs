@@ -28,13 +28,9 @@ public partial class ProjectView : UserControl
         set => SetValue(TreeViewVisibilityProperty, value);
     }
 
-    public List<ArgonTreeItem> TreeItems { get; }
-
     public ProjectView()
     {
         InitializeComponent();
-
-        TreeItems = new List<ArgonTreeItem>();
     }
 
     public void ShowProject(ProjectFile? project)

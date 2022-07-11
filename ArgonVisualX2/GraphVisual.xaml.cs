@@ -19,25 +19,23 @@ namespace ArgonVisualX2;
 /// </summary>
 public partial class GraphVisual : UserControl
 {
-    public static readonly DependencyProperty ScreenOffsetProperty = DependencyProperty.Register("ScreenOffset", typeof(Point), typeof(NodePanel), new FrameworkPropertyMetadata(new Point(0, 0), HandleScreenOffsetChanged));
+    private bool _isPanning;
+    private Point _mouseStartOffset;
 
-    private static void HandleScreenOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is GraphVisual graphVisual)
-        {
-            graphVisual.HandleScreenOffsetChanged((Point)e.NewValue);
-        }
-    }
+    private Point _lastScreenOffset;
 
-    private void HandleScreenOffsetChanged(Point newOffset) 
-    {
-        NodePanel.Global.NodesOffset = newOffset;
-    }
+    private Point _screenOffset;
 
     public Point ScreenOffset
     {
-        get => (Point)GetValue(ScreenOffsetProperty);
-        set => SetValue(ScreenOffsetProperty, value);
+        get => _screenOffset;
+        set 
+        {
+            _screenOffset = value;
+
+            NodePanel.Global.NodesOffset = value;
+            NodePanel.Global.InvalidateVisual();
+        }
     }
 
     public List<NodeData> Nodes { get; }
@@ -46,15 +44,36 @@ public partial class GraphVisual : UserControl
     {
         Nodes = new List<NodeData>();
 
-        Nodes.Add(new NodeData("This is a node!") { Position = new Point(200, 200) });
-        Nodes.Add(new NodeData("Nodes are the future of programming!") { Position = new Point(300, 300) });
+        Nodes.Add(new NodeData("Get {Object} from {Array}") { Position = new Point(100, 100) });
+        Nodes.Add(new NodeData("Normalize {String}") { Position = new Point(200, 200) });
         
         InitializeComponent();
     }
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
-        Point mousePosition = Mouse.GetPosition(this);
-        ScreenOffset = mousePosition;
+        if (_isPanning)
+        {
+            Point mousePosition = Mouse.GetPosition(this);
+            ScreenOffset = new Point(mousePosition.X - _mouseStartOffset.X + _lastScreenOffset.X, mousePosition.Y - _mouseStartOffset.Y + _lastScreenOffset.Y);
+        }
+    }
+
+    protected override void OnMouseDown(MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Right)
+        {
+            _mouseStartOffset = Mouse.GetPosition(this);
+            _isPanning = true;
+        }
+    }
+
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Right)
+        {
+            _isPanning = false;
+            _lastScreenOffset = ScreenOffset;
+        }
     }
 }
