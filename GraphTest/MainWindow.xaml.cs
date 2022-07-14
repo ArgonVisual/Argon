@@ -22,5 +22,8 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        MainGraph.Nodes.Add(new Node(new Point(100, 100)));
+        MainGraph.Nodes.Add(new Node(new Point(200, 200)));
     }
 }

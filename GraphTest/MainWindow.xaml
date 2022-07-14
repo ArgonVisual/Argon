@@ -5,8 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GraphTest"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Argon Graph Test" 
+        Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen">
     <Grid>
-
+        <local:Graph x:Name="MainGraph"></local:Graph>
     </Grid>
 </Window>

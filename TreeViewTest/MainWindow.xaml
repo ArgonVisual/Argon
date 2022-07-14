@@ -13,20 +13,17 @@
             <TreeView.Resources>
                 <HierarchicalDataTemplate ItemsSource="{Binding TreeItems}" DataType="{x:Type local:FolderTreeItem}">
                     <StackPanel Orientation="Horizontal">
-                        <Image x:Name="DisplayImage" Width="16" Height="16" Source="/TreeViewTest;component/Icons/Folder.png" Margin="0, 0, 5, 0"></Image>
+                        <Image Width="16" Height="16" Source="/TreeViewTest;component/Icons/Folder.png" Margin="0, 0, 5, 0"></Image>
                         <TextBlock Text="{Binding Name}" FontSize="12"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding TreeItems}" DataType="{x:Type local:SolutionTreeItem}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image x:Name="DisplayImage" Width="16" Height="16" Source="/TreeViewTest;component/Icons/Solution.png" Margin="0, 0, 5, 0"></Image>
-                        <TextBlock Text="{Binding Name}" FontSize="12"/>
-                    </StackPanel>
+                    <TextBlock Text="{Binding Name}" FontSize="12"/>
                 </HierarchicalDataTemplate>
                 <HierarchicalDataTemplate ItemsSource="{Binding TreeItems}" DataType="{x:Type local:FileTreeItem}">
                     <StackPanel Orientation="Horizontal">
-                        <Image x:Name="DisplayImage" Width="16" Height="16" Source="/TreeViewTest;component/Icons/CodeFile.png" Margin="0, 0, 5, 0"></Image>
-                        <TextBlock Text="{Binding Name}" FontSize="12"/>
+                        <Image Width="16" Height="16" Source="/TreeViewTest;component/Icons/CodeFile.png" Margin="0, 0, 5, 0"></Image>
+                        <TextBlock Text="{Binding Name}" FontSize="15"/>
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
