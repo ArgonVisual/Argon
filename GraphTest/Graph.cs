@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,6 +20,7 @@ public class Graph : Border
     private ConnectionRenderer _connectionRenderer;
     private Grid _grid;
 
+    public Parameter? HoveredParameter { get; set; }
     public Parameter? DraggedParameter { get; set; }
 
     private Node? _draggedNode;
@@ -37,8 +39,8 @@ public class Graph : Border
 
         _grid = new Grid();
 
-        _grid.Children.Add(_nodePanel = new NodePanel());
         _grid.Children.Add(_connectionRenderer = new ConnectionRenderer(this));
+        _grid.Children.Add(_nodePanel = new NodePanel());
 
         Child = _grid;
     }
@@ -98,6 +100,7 @@ public class Graph : Border
             Point mousePosition = Mouse.GetPosition(this);
             Node node = new Node(new Point(mousePosition.X - _lastGraphOffset.X, mousePosition.Y - _lastGraphOffset.Y));
             Nodes.Add(node);
+            _connectionRenderer.InvalidateVisual();
         }
     }
 
@@ -115,5 +118,17 @@ public class Graph : Border
         }
 
         _connectionRenderer.InvalidateVisual();
+    }
+
+    public IEnumerable<Parameter> GetAllParameters() 
+    {
+        for (int n = 0; n < Nodes.Count; n++)
+        {
+            IReadOnlyList<Parameter> parameters = ((Node)Nodes[n]).Parameters;
+            for (int p = 0; p < parameters.Count; p++)
+            {
+                yield return parameters[p];
+            }
+        }
     }
 }
