@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -11,18 +12,15 @@ namespace GraphTest;
 public class Parameter : Border
 {
     public Parameter? ConnectedIn { get; private set; }
+    public Parameter? ConnectedOut { get; private set; }
 
-    public IReadOnlyList<Parameter> ConnectedOut => _connectedOut;
-
-    public List<Parameter> _connectedOut;
-
-    public Node ParentNode 
+    public Node? ParentNode 
     { 
         get 
         {
             DependencyObject parent = Parent;
 
-            while (parent is not null)
+            while (parent != null)
             {
                 Node? node = parent as Node;
                 if (node is not null)
@@ -33,18 +31,32 @@ public class Parameter : Border
                 {
                     parent = frameworkElement.Parent;
                 }
+                else if (parent is FrameworkContentElement frameworkContentElement)
+                {
+                    parent = frameworkContentElement.Parent;
+                }
             }
 
-            throw new Exception("Node does not have an parent");
+            return null;
+        }
+    }
+
+    public void StopDragging() 
+    {
+        if (IsMouseOver)
+        {
+            Background = _hoverBrush;
+        }
+        else
+        {
+            Background = _normalBrush;
         }
     }
 
     public Parameter(string name)
     {
-        _connectedOut = new List<Parameter>();
-
         CornerRadius = new CornerRadius(5);
-        Background = Brushes.DarkCyan;
+        Background = _normalBrush;
         Child = new TextBlock()
         {
             Text = name,
@@ -54,16 +66,76 @@ public class Parameter : Border
         };
     }
 
+    public static bool CanConnect(Parameter a, Parameter b) 
+    {
+        if (a.ParentNode == b.ParentNode)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void AddChildNodes(List<Node> nodes) 
+    {
+        PopulateChildNodesInternal(nodes);
+    }
+
+    private void PopulateChildNodesInternal(List<Node> nodes)
+    {
+        Node? parentNode = ParentNode;
+        if (parentNode != null)
+        {
+            nodes.Add(parentNode);
+        }
+
+        if (ConnectedOut != null && ConnectedOut.ParentNode != null)
+        {
+            ConnectedOut.ParentNode.AddChildNodesInternal(nodes);
+        }
+    }
+
+    public void DisconnectIn() 
+    {
+        if (ConnectedIn != null)
+        {
+            ConnectedIn.ConnectedOut = null;
+            ConnectedIn = null;
+        }
+    }
+
+    public void DisconnectOut()
+    {
+        if (ConnectedOut != null)
+        {
+            ConnectedOut.ConnectedIn = null;
+            ConnectedOut = null;
+        }
+    }
+
     public void ConnectTo(Parameter parameter) 
     {
-        parameter._connectedOut.Add(this);
+        DisconnectOut();
+        parameter.DisconnectIn();
+
+        ConnectedOut = parameter;
+        parameter.ConnectedIn = this;
     }
 
     protected override void OnMouseDown(MouseButtonEventArgs e)
     {
         if (e.ChangedButton == MouseButton.Left)
         {
-            Graph.Global.DraggedParameter = this;
+            if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+            {
+
+            }
+            else
+            {
+                Graph.Global.DraggedParameter = this;
+                Background = _draggedBrush;
+            }
+
             e.Handled = true;
         }
     }
@@ -72,20 +144,53 @@ public class Parameter : Border
     {
         if (Graph.Global.HoveredParameter != null && Graph.Global.DraggedParameter != null)
         {
-            Graph.Global.DraggedParameter.ConnectTo(this);
+            // Connect DraggedParameter to HoveredParameter
+
+            Point hoveredPosition = TransformToAncestor(Graph.Global).Transform(new Point(0, 0));
+            Point draggedPosition = Graph.Global.DraggedParameter.TransformToAncestor(Graph.Global).Transform(new Point(0, 0));
+
+            if (draggedPosition.Y <= hoveredPosition.Y)
+            {
+                Graph.Global.DraggedParameter.ConnectTo(this);
+            }
+            else
+            {
+                this.ConnectTo(Graph.Global.DraggedParameter);
+            }
+
+            
             Graph.Global.HoveredParameter = null;
         }
     }
 
     protected override void OnMouseEnter(MouseEventArgs e)
     {
-        Background = Brushes.DarkSlateBlue;
+        if (Graph.Global.DraggedParameter != null)
+        {
+            if (CanConnect(this, Graph.Global.DraggedParameter))
+            {
+                Background = _hoverBrush;
+            }
+        }
+        else
+        {
+            Background = _hoverBrush;
+        }
+
         Graph.Global.HoveredParameter = this;
     }
 
     protected override void OnMouseLeave(MouseEventArgs e)
     {
-        Background = Brushes.DarkCyan;
+        if (Graph.Global.DraggedParameter != null && this == Graph.Global.DraggedParameter)
+        {
+            Background = _draggedBrush;
+        }
+        else
+        {
+            Background = _normalBrush;
+        }
+        
         Graph.Global.HoveredParameter = null;
     }
 
@@ -97,7 +202,11 @@ public class Parameter : Border
         base.OnRender(dc);
     }
 
-    private const double _ellipseSize = 15;
+    private const double _ellipseSize = 10;
 
     private static Brush _redBrush = Brushes.Red;
+
+    private static Brush _normalBrush = Brushes.DarkCyan;
+    private static Brush _hoverBrush = Brushes.DarkSlateBlue;
+    private static Brush _draggedBrush = Brushes.DarkGoldenrod;
 }

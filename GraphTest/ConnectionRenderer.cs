@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,48 +18,46 @@ public class ConnectionRenderer : FrameworkElement
 
     protected override void OnRender(DrawingContext dc)
     {
-        // Draw parameters dots
-#if false
-
         IEnumerable<Parameter> parameters = _graph.GetAllParameters();
         foreach (Parameter parameter in parameters)
         {
-            // IReadOnlyList<Parameter> connectedParameters = parameter.ConnectedOut;
-            // foreach (Parameter connectedParameter in connectedParameters)
-            // {
-            //     DrawConnection(dc, GetParameterPosition(parameter), GetParameterPosition(connectedParameter));
-            // }
-
-            if (_graph.IsAncestorOf(parameter))
+            if (parameter.ConnectedOut != null)
             {
-                Point top = GetParameterConnnectionPosition(parameter, false);
-                Point bottom = GetParameterConnnectionPosition(parameter, true);
-
-                DrawEllipse(dc, top);
-                DrawEllipse(dc, bottom);
+                DrawConnection(dc, parameter, parameter.ConnectedOut);
             }
         }
-#endif
 
         if (_graph.DraggedParameter != null)
         {
             Parameter parameter = _graph.DraggedParameter;
             Parameter? hoveredParameter = _graph.HoveredParameter;
 
-            Point parameterPosition = GetParameterConnnectionPosition(parameter, true);
             Point mousePosition = Mouse.GetPosition(_graph);
+            Point parameterPosition = GetParameterConnnectionPosition(parameter, mousePosition.Y, out bool bottom);
 
-            Point startPosition = new Point(parameterPosition.X + (parameter.ActualWidth / 2), parameterPosition.Y + parameter.ActualHeight);
+            Point startPosition = new Point(parameterPosition.X, parameterPosition.Y);
             Point endPosition = mousePosition;
 
-            if (hoveredParameter != null)
+            if (hoveredParameter != null && Parameter.CanConnect(hoveredParameter, parameter))
             {
-                Point hoveredParameterPosition = GetParameterConnnectionPosition(hoveredParameter, true);
-                endPosition = new Point(hoveredParameterPosition.X + (hoveredParameter.ActualWidth / 2), hoveredParameterPosition.Y);
+                Point hoveredParameterPosition = GetParameterConnnectionPosition(hoveredParameter, !bottom);
+                endPosition = new Point(hoveredParameterPosition.X, hoveredParameterPosition.Y);
+            }
+            else
+            {
+                dc.DrawEllipse(_redBrush, null, endPosition, 8, 8);
             }
 
-            DrawConnection(dc, startPosition, endPosition);
+            dc.DrawLine(_redPen, startPosition, endPosition);
         }
+    }
+
+    private void DrawConnection(DrawingContext dc, Parameter from, Parameter to) 
+    {
+        Point fromPos = GetParameterConnnectionPosition(from, true);
+        Point toPos = GetParameterConnnectionPosition(to, false);
+
+        dc.DrawLine(_redPen, fromPos, toPos);
     }
 
     private void DrawEllipse(DrawingContext dc, Point position)
@@ -66,25 +65,39 @@ public class ConnectionRenderer : FrameworkElement
         dc.DrawEllipse(_redBrush, null, position, 10, 10);
     }
 
-    private void DrawConnection(DrawingContext dc, Point from, Point to)
-    {
-        dc.DrawLine(_redPen, from, to);
-        dc.DrawEllipse(_redBrush, null, from, 15, 15);
-        dc.DrawEllipse(_redBrush, null, to, 15, 15);
-    }
-
     private Point GetParameterConnnectionPosition(Parameter parameter, bool bottom)
     {
         Point position = parameter.TransformToAncestor(_graph).Transform(new Point(0, 0));
         Point centerTop = new Point(position.X + (parameter.ActualWidth / 2), position.Y);
 
+        const double offset = 3;
+
         if (bottom)
         {
-            return new Point(centerTop.X, centerTop.Y + parameter.ActualHeight);
+            return new Point(centerTop.X, centerTop.Y + parameter.ActualHeight + offset);
         }
         else
         {
-            return centerTop;
+            return new Point(centerTop.X, centerTop.Y - offset);
+        }
+    }
+
+    private Point GetParameterConnnectionPosition(Parameter parameter, double yPos, out bool bottom)
+    {
+        Point position = parameter.TransformToAncestor(_graph).Transform(new Point(0, 0));
+        Point centerTop = new Point(position.X + (parameter.ActualWidth / 2), position.Y);
+
+        const double offset = 3;
+
+        if (position.Y + (parameter.ActualHeight / 2) < yPos)
+        {
+            bottom = true;
+            return new Point(centerTop.X, centerTop.Y + parameter.ActualHeight + offset);
+        }
+        else
+        {
+            bottom = false;
+            return new Point(centerTop.X, centerTop.Y - offset);
         }
     }
 

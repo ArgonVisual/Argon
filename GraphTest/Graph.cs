@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -16,6 +17,8 @@ public class Graph : Border
     // Only nodes should be placed in this collection. If not then errors will happen!
     public UIElementCollection Nodes => _nodePanel.Children;
 
+    public IEnumerable<Node> NodesToDrag { get; set; }
+
     private NodePanel _nodePanel;
     private ConnectionRenderer _connectionRenderer;
     private Grid _grid;
@@ -30,6 +33,8 @@ public class Graph : Border
     private Point _mouseStart;
     private Point _lastGraphOffset;
     private Point _currentGraphOffset;
+
+    private Point? _lastNodeDragMousePosition;
 
     public Graph() 
     {
@@ -73,7 +78,30 @@ public class Graph : Border
         else if (_draggedNode is not null)
         {
             Point mousePosition = Mouse.GetPosition(this);
-            _draggedNode.Position = new Point((mousePosition.X - _mouseOffsetInNode.X) - _lastGraphOffset.X, (mousePosition.Y - _mouseOffsetInNode.Y) - _lastGraphOffset.Y);
+
+            if (_lastNodeDragMousePosition == null)
+            {
+                _lastNodeDragMousePosition = mousePosition;
+            }
+
+            if (_lastNodeDragMousePosition is Point validPoint)
+            {
+                Point draggedNodePosition = _draggedNode.TransformToAncestor(this).Transform(new Point(0, 0));
+
+                bool isTooHigh = _draggedNode.DirectParentNodes.Any((node) =>
+                {
+                    Point nodePosition = node.TransformToAncestor(this).Transform(new Point(0, 0));
+                    return mousePosition.Y < nodePosition.Y + (node.ActualHeight / 2) + node.ActualHeight + 30;
+                });
+
+                foreach (var node in NodesToDrag)
+                {
+                    Vector relativeOffset = Point.Subtract(mousePosition, validPoint);
+                    node.Position = new Point(node.Position.X + relativeOffset.X, node.Position.Y + (isTooHigh ? 0 : relativeOffset.Y));
+                }
+            }
+
+            _lastNodeDragMousePosition = mousePosition;
             InvalidateGraph();
         }
         else if (DraggedParameter != null)
@@ -111,11 +139,17 @@ public class Graph : Border
             _isPanning = false;
             _lastGraphOffset = _currentGraphOffset;
         }
+        else if (DraggedParameter != null)
+        {
+            DraggedParameter.StopDragging();
+            DraggedParameter = null;
+        }
         else
         {
             StopDraggingNode();
-            DraggedParameter = null;
         }
+
+        _lastNodeDragMousePosition = null;
 
         _connectionRenderer.InvalidateVisual();
     }

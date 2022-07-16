@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Text;
 using System.Collections.Generic;
 using System.Windows.Documents;
+using System.Linq;
 
 namespace GraphTest;
 
@@ -20,7 +21,23 @@ public class Node : Border
 
     private static Brush _backgroundBrush;
 
-    static Node() 
+    private bool _parentNodesNeedRefresh;
+
+    private IEnumerable<Node>? _directParentNodes;
+    public IEnumerable<Node> DirectParentNodes
+    {
+        get 
+        {
+            if (_directParentNodes == null || _parentNodesNeedRefresh)
+            {
+                _directParentNodes = GetDirectParentNodes();
+            }
+
+            return _directParentNodes;
+        }
+    }
+
+    static Node()
     {
         Color color = new Color()
         {
@@ -49,10 +66,28 @@ public class Node : Border
         {
             Foreground = Brushes.White,
             FontSize = 25,
-            Margin = new Thickness(5)
+            Margin = new Thickness(5, 2.5, 5, 2.5)
         };
 
         PopulateInlines();
+    }
+
+    // Only Node or Parameter should call this
+    public void AddChildNodesInternal(List<Node> nodes)
+    {
+        foreach (Parameter parameter in Parameters)
+        {
+            parameter.AddChildNodes(nodes);
+        }
+    }
+
+    public IEnumerable<Node> GetChildNodes()
+    {
+        List<Node> nodes = new List<Node>();
+
+        AddChildNodesInternal(nodes);
+
+        return nodes.Distinct();
     }
 
     protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -60,7 +95,28 @@ public class Node : Border
         if (e.ChangedButton == MouseButton.Left)
         {
             Graph.Global.StartDraggingNode(this);
+            IEnumerable<Node> childNodes = GetChildNodes();
+            Graph.Global.NodesToDrag = childNodes;
         }
+    }
+
+    private IEnumerable<Node> GetDirectParentNodes()
+    {
+        List<Node> parentNodes = new List<Node>();
+
+        foreach (Parameter parameter in Parameters)
+        {
+            if (parameter.ConnectedIn != null)
+            {
+                Node? parentNode = parameter.ConnectedIn.ParentNode;
+                if (parentNode != null)
+                {
+                    parentNodes.Add(parentNode);
+                }
+            }
+        }
+
+        return parentNodes.Distinct();
     }
 
     public void PopulateInlines()
@@ -69,12 +125,13 @@ public class Node : Border
 
         _nameText.Inlines.Clear();
         _parameters.Clear();
+        _parentNodesNeedRefresh = true;
 
         if (_nodeText.Length > 0)
         {
             bool isReadingParameter = false;
 
-            void AddInline() 
+            void AddInline()
             {
                 if (isReadingParameter)
                 {
