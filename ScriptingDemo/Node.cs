@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ScriptingDemo;
 
@@ -10,13 +11,6 @@ namespace ScriptingDemo;
 /// </summary>
 public abstract class Node : ContentControl
 {
-    /// <summary>
-    /// The position relative to the graph as to where the node should be rendered.
-    /// If a node has a parent, it's position it relative to it's parents position.
-    /// Else the user can drag the node anywhere they want until a connection to a parent node is created.
-    /// </summary>
-    public Point Position { get; set; }
-
     private Node? _parentNode;
     public Node? ParentNode
     {
@@ -24,24 +18,38 @@ public abstract class Node : ContentControl
         set
         {
             _parentNode = value;
-            if (ParentGraph != null)
+
+            Graph? parentGraph = ParentGraph;
+
+            if (parentGraph != null)
             {
-                AddAllChildNodesToGraph(ParentGraph);
+                EnumerateAllChildren((node) => parentGraph.NodePanel.Children.Add(node));
             }
         }
     }
 
+    public NodeCollection? ParentCollection { get; set; }
+
     public virtual Graph? ParentGraph => ParentNode != null ? ParentNode.ParentGraph : null;
 
-    public abstract IEnumerable<Node> GetDirectChildNodes();
-
-    public void AddAllChildNodesToGraph(Graph graph) 
+    public virtual Point GetConnectionPositionForNodeCollection(NodeCollection nodeCollection, Graph graph)
     {
-        IEnumerable<Node> childNodes = GetDirectChildNodes();
-        foreach (Node node in childNodes)
+        return this.GetCenterPositionRelativeTo(graph);
+    }
+
+    public void DrawConnectionToParent(DrawingContext dc, Graph graph) 
+    {
+        if (ParentNode != null && ParentCollection != null)
         {
-            graph.NodePanel.Children.Add(node);
-            node.AddAllChildNodesToGraph(graph);
+            dc.DrawConnection(this.GetCenterPositionRelativeTo(graph), ParentNode.GetConnectionPositionForNodeCollection(ParentCollection, graph));
         }
+    }
+
+    public abstract void EnumerateDirectChildren(Action<Node> action);
+
+    public void EnumerateAllChildren(Action<Node> action) 
+    {
+        action(this);
+        EnumerateDirectChildren((node) => node.EnumerateAllChildren(action));
     }
 }

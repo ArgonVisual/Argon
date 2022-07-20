@@ -97,4 +97,16 @@ public static class WidgetHelper
         else
             return FindParent<T>(parentObject);
     }
+
+    public static Point GetCenterPositionRelativeTo(this UIElement child, UIElement parent) 
+    {
+        return child.TransformToAncestor(parent).Transform(new Point(child.RenderSize.Width / 2, child.RenderSize.Height / 2));
+    }
+
+    public static void DrawConnection(this DrawingContext dc, Point start, Point end, Pen? pen = null)
+    {
+        dc.DrawLine(pen ?? _whitePen, start, end);
+    }
+
+    private static Pen _whitePen = new Pen(Brushes.LightGray, 5);
 }

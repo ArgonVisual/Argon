@@ -1,28 +1,16 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace ScriptingDemo;
 
 public class Graph : Border
 {
-    private class ConnectionRenderer : FrameworkElement
-    {
-        public ConnectionRenderer() 
-        {
-            
-        }
-
-        protected override void OnRender(DrawingContext dc)
-        {
-
-        }
-    }
-
     public Node RootNode { get; }
 
     public NodePanel NodePanel { get; }
-    private ConnectionRenderer _connectionRenderer;
+    public ConnectionRenderer ConnectionRenderer { get; }
 
     public Graph() 
     {
@@ -30,18 +18,14 @@ public class Graph : Border
 
         Grid grid = new Grid();
 
-        grid.Children.Add(_connectionRenderer = new ConnectionRenderer());
-        grid.Children.Add(NodePanel = new NodePanel());
+        grid.Children.Add(ConnectionRenderer = new ConnectionRenderer(this));
+        grid.Children.Add(NodePanel = new NodePanel(this));
 
-        RootNode rootNode = new RootNode(this) { Position = new Point(200, 200) };
-        BranchNode branchNode = new BranchNode() { Position = new Point(150, 300) };
+        RootNode rootNode = new RootNode(this);
+        BranchNode branchNode = new BranchNode();
 
-        // Nodes must always be added to their parent before their children can be added.
-        // If this rule is not followed, then the code will not work.
-
+        branchNode.TrueNodes.Add(new BranchNode());
         rootNode.Nodes.Add(branchNode);
-        branchNode.TrueNodes.Add(new BranchNode() { Position = new Point(200, 400) });
-
 
         NodePanel.Children.Add(rootNode);
         RootNode = rootNode;

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ScriptingDemo;
 
@@ -41,8 +43,11 @@ public class RootNode : Node
         };
     }
 
-    public override IEnumerable<Node> GetDirectChildNodes()
+    public override void EnumerateDirectChildren(Action<Node> action)
     {
-        return Nodes;
+        foreach (Node node in Nodes)
+        {
+            action(node);
+        }
     }
 }

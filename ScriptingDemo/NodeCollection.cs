@@ -14,16 +14,15 @@ public class NodeCollection : Collection<Node>
     protected override void InsertItem(int index, Node item)
     {
         item.ParentNode = Owner;
-        Owner.ParentGraph?.NodePanel.Children.Add(item);
-
+        item.ParentCollection = this;
         base.InsertItem(index, item);
     }
 
     protected override void RemoveItem(int index)
     {
         Node item = this[index];
-
         item.ParentNode = null;
+        item.ParentCollection = null;
 
         base.RemoveItem(index);
     }
@@ -33,6 +32,7 @@ public class NodeCollection : Collection<Node>
         foreach (Node item in this)
         {
             item.ParentNode = null;
+            item.ParentCollection = null;
         }
 
         base.ClearItems();

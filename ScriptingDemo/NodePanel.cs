@@ -6,10 +6,11 @@ namespace ScriptingDemo;
 public class NodePanel : Panel
 {
     public Point ScreenOffset { get; set; }
+    public Graph Graph { get; }
 
-    public NodePanel()
+    public NodePanel(Graph graph)
     {
-
+        Graph = graph;
     }
 
     // Override the default Measure method of Panel
@@ -30,10 +31,18 @@ public class NodePanel : Panel
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        foreach (Node child in InternalChildren)
+        Node currentNode = Graph.RootNode;
+        Point currentPosition = new Point(600, 100);
+        Graph.RootNode.Arrange(new Rect(new Point(currentPosition.X + ScreenOffset.X, currentPosition.Y + ScreenOffset.Y), Graph.RootNode.DesiredSize));
+
+        currentNode.EnumerateAllChildren((node) => 
         {
-            child.Arrange(new Rect(new Point(child.Position.X + ScreenOffset.X, child.Position.Y + ScreenOffset.Y), child.DesiredSize));
-        }
+            currentPosition.Y += _incrementSize;
+            node.Arrange(new Rect(new Point(currentPosition.X + ScreenOffset.X, currentPosition.Y + ScreenOffset.Y), node.DesiredSize));
+        });
+
         return finalSize; // Returns the final Arranged size
     }
+
+    private const double _incrementSize = 100;
 }

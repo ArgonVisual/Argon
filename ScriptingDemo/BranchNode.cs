@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ScriptingDemo;
 
@@ -9,6 +11,9 @@ public class BranchNode : Node
     public NodeCollection FalseNodes { get; }
 
     public NodeCollection TrueNodes { get; }
+
+    private NamedConnector _falseConnector;
+    private NamedConnector _trueConnector;
 
     public BranchNode() 
     {
@@ -33,24 +38,34 @@ public class BranchNode : Node
 
         Grid trueFalseGrid = new Grid() { Margin = new Thickness(0, 5, 0, 0) };
 
-        trueFalseGrid.AddColumnFill(new NamedConnector("FALSE", VisualStyle.FalseBrush) { Margin = new Thickness(0, 0, 2.5, 0) });
-        trueFalseGrid.AddColumnFill(new NamedConnector("TRUE", VisualStyle.TrueBrush) { Margin = new Thickness(2.5, 0, 0, 0) });
+        trueFalseGrid.AddColumnFill(_falseConnector = new NamedConnector("FALSE", VisualStyle.FalseBrush) { Margin = new Thickness(0, 0, 2.5, 0) });
+        trueFalseGrid.AddColumnFill(_trueConnector = new NamedConnector("TRUE", VisualStyle.TrueBrush) { Margin = new Thickness(2.5, 0, 0, 0) });
 
         panel.Children.Add(trueFalseGrid);
 
         Content = panel;
     }
 
-    public override IEnumerable<Node> GetDirectChildNodes()
+    public override Point GetConnectionPositionForNodeCollection(NodeCollection nodeCollection, Graph graph)
+    {
+        if (nodeCollection == TrueNodes)
+        {
+            return _trueConnector.GetCenterPositionRelativeTo(graph);
+        }
+
+        return _falseConnector.GetCenterPositionRelativeTo(graph);
+    }
+
+    public override void EnumerateDirectChildren(Action<Node> action)
     {
         foreach (Node falseNode in FalseNodes)
         {
-            yield return falseNode;
+            action(falseNode);
         }
 
         foreach (Node trueNode in TrueNodes)
         {
-            yield return trueNode;
+            action(trueNode);
         }
     }
 }
