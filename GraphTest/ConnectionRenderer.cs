@@ -70,15 +70,13 @@ public class ConnectionRenderer : FrameworkElement
         Point position = parameter.TransformToAncestor(_graph).Transform(new Point(0, 0));
         Point centerTop = new Point(position.X + (parameter.ActualWidth / 2), position.Y);
 
-        const double offset = 3;
-
         if (bottom)
         {
-            return new Point(centerTop.X, centerTop.Y + parameter.ActualHeight + offset);
+            return new Point(centerTop.X, centerTop.Y + parameter.ActualHeight + Parameter.DotOffset);
         }
         else
         {
-            return new Point(centerTop.X, centerTop.Y - offset);
+            return new Point(centerTop.X, centerTop.Y - Parameter.DotOffset);
         }
     }
 
@@ -87,20 +85,18 @@ public class ConnectionRenderer : FrameworkElement
         Point position = parameter.TransformToAncestor(_graph).Transform(new Point(0, 0));
         Point centerTop = new Point(position.X + (parameter.ActualWidth / 2), position.Y);
 
-        const double offset = 3;
-
         if (position.Y + (parameter.ActualHeight / 2) < yPos)
         {
             bottom = true;
-            return new Point(centerTop.X, centerTop.Y + parameter.ActualHeight + offset);
+            return new Point(centerTop.X, centerTop.Y + parameter.ActualHeight + Parameter.DotOffset);
         }
         else
         {
             bottom = false;
-            return new Point(centerTop.X, centerTop.Y - offset);
+            return new Point(centerTop.X, centerTop.Y - Parameter.DotOffset);
         }
     }
 
     private static Brush _redBrush = Brushes.Red;
-    private static Pen _redPen = new Pen(_redBrush, 5);
+    private static Pen _redPen = new Pen(_redBrush, 4);
 }

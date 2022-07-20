@@ -14,6 +14,12 @@ public class Parameter : Border
     public Parameter? ConnectedIn { get; private set; }
     public Parameter? ConnectedOut { get; private set; }
 
+    public bool HasConnection => ConnectedIn != null || ConnectedOut != null;
+
+    public string ParameterName { get; }
+
+    public const double DotOffset = 10;
+
     public Node? ParentNode 
     { 
         get 
@@ -34,6 +40,10 @@ public class Parameter : Border
                 else if (parent is FrameworkContentElement frameworkContentElement)
                 {
                     parent = frameworkContentElement.Parent;
+                }
+                else
+                {
+                    return null;
                 }
             }
 
@@ -59,7 +69,7 @@ public class Parameter : Border
         Background = _normalBrush;
         Child = new TextBlock()
         {
-            Text = name,
+            Text = ParameterName = name,
             FontSize = 25,
             Foreground = Brushes.White,
             Margin = new Thickness(5, 0, 5, 0)
@@ -197,12 +207,14 @@ public class Parameter : Border
     protected override void OnRender(DrawingContext dc)
     {
         double center = ActualWidth / 2;
-        dc.DrawEllipse(_redBrush, null, new Point(center, 0), _ellipseSize, _ellipseSize);
-        dc.DrawEllipse(_redBrush, null, new Point(center, ActualHeight), _ellipseSize, _ellipseSize);
+
+
+        dc.DrawEllipse(_redBrush, null, new Point(center, 0 - DotOffset), _ellipseSize, _ellipseSize);
+        dc.DrawEllipse(_redBrush, null, new Point(center, ActualHeight + DotOffset), _ellipseSize, _ellipseSize);
         base.OnRender(dc);
     }
 
-    private const double _ellipseSize = 10;
+    private const double _ellipseSize = 5;
 
     private static Brush _redBrush = Brushes.Red;
 

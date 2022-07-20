@@ -14,6 +14,20 @@ public class Graph : Border
 
     public static Graph Global => _global ?? throw new InvalidOperationException("Graph has not been instanced");
 
+    public Node? SelectedNode { get; private set; }
+
+    // Only Node should call this. To actually select a node, call Node.Select();
+    public void SelectNode(Node nodeToSelect) 
+    {
+        if (SelectedNode != null)
+        {
+            SelectedNode.Deselect();
+        }
+
+        SelectedNode = nodeToSelect;
+        ((MainWindow)Application.Current.MainWindow).ShowNodeOptions(nodeToSelect);
+    }
+
     // Only nodes should be placed in this collection. If not then errors will happen!
     public UIElementCollection Nodes => _nodePanel.Children;
 
@@ -38,6 +52,8 @@ public class Graph : Border
 
     public Graph() 
     {
+        ClipToBounds = true;
+
         _global = this;
 
         Background = Brushes.Gray;

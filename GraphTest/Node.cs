@@ -16,8 +16,10 @@ public class Node : Border
 
     public Point Position { get; set; }
 
+    public bool HasConnection => Parameters.Any((parameter) => parameter.HasConnection);
+
     private TextBlock _nameText;
-    private string _nodeText;
+    public string NodeText { get; private set; }
 
     private static Brush _backgroundBrush;
 
@@ -37,6 +39,12 @@ public class Node : Border
         }
     }
 
+    public void SetNodeTitle(string newTitle) 
+    {
+        NodeText = newTitle;
+        PopulateInlines();
+    }
+
     static Node()
     {
         Color color = new Color()
@@ -52,6 +60,8 @@ public class Node : Border
 
     public Node(Point position)
     {
+        BorderThickness = new Thickness(2);
+
         Position = position;
         _parameters = new List<Parameter>();
 
@@ -60,7 +70,7 @@ public class Node : Border
         Background = _backgroundBrush;
         CornerRadius = new CornerRadius(10);
 
-        _nodeText = "Get {Level} from {World}";
+        NodeText = "Get {Level} from {World}";
 
         Child = _nameText = new TextBlock()
         {
@@ -70,6 +80,20 @@ public class Node : Border
         };
 
         PopulateInlines();
+    }
+
+    private static Brush _selectedBorderBrush = BrushHelper.MakeSolidBrush(255, 216, 23);
+    private static Brush _normalBorderBrush = Brushes.Transparent;
+
+    public void Select() 
+    {
+        Graph.Global.SelectNode(this);
+        BorderBrush = _selectedBorderBrush;
+    }
+
+    public void Deselect()
+    {
+        BorderBrush = _normalBorderBrush;
     }
 
     // Only Node or Parameter should call this
@@ -97,6 +121,7 @@ public class Node : Border
             Graph.Global.StartDraggingNode(this);
             IEnumerable<Node> childNodes = GetChildNodes();
             Graph.Global.NodesToDrag = childNodes;
+            Select();
         }
     }
 
@@ -127,7 +152,7 @@ public class Node : Border
         _parameters.Clear();
         _parentNodesNeedRefresh = true;
 
-        if (_nodeText.Length > 0)
+        if (NodeText.Length > 0)
         {
             bool isReadingParameter = false;
 
@@ -150,9 +175,9 @@ public class Node : Border
                 _nameBuilder.Clear();
             }
 
-            for (int i = 0; i < _nodeText.Length; i++)
+            for (int i = 0; i < NodeText.Length; i++)
             {
-                char character = _nodeText[i];
+                char character = NodeText[i];
                 if (character == '{' && !isReadingParameter)
                 {
                     if (_nameBuilder.Length > 0)

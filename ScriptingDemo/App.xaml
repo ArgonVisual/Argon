@@ -1,0 +1,16 @@
+﻿<Application x:Class="ScriptingDemo.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ScriptingDemo"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="White"></Setter>
+                <Setter Property="FontSize" Value="25"></Setter>
+                <Setter Property="FontFamily" Value="Bahnschrift"></Setter>
+                <Setter Property="FontWeight" Value="Light"></Setter>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

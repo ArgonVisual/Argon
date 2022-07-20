@@ -9,6 +9,29 @@
         Height="700" Width="1200"
         WindowStartupLocation="CenterScreen">
     <Grid>
-        <local:Graph x:Name="MainGraph"></local:Graph>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Margin="10">
+            <TextBox x:Name="NodeNameText" FontSize="25" TextChanged="NodeNameText_TextChanged" IsEnabled="False"/>
+            <Label FontSize="20" HorizontalAlignment="Center">Parameters</Label>
+            <ListView x:Name="ParameterListView" Margin="10, 5, 10, 10">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}" FontSize="15" Margin="5"></TextBlock>
+                            
+                            <TextBlock Text="Mode: " FontSize="15" Margin="5, 5, 0, 5"></TextBlock>
+                            <TextBlock Text="{Binding Type}" FontSize="15" Margin="0, 5, 5, 5"></TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <TextBlock Foreground="Red" FontSize="12" x:Name="WarningText" Visibility="Collapsed" Text="Node must not have connections to change name"></TextBlock>
+            
+        </StackPanel>
+        <local:Graph Grid.Column="1" x:Name="MainGraph"></local:Graph>
     </Grid>
 </Window>
