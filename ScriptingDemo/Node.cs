@@ -52,4 +52,41 @@ public abstract class Node : ContentControl
         action(this);
         EnumerateDirectChildren((node) => node.EnumerateAllChildren(action));
     }
+
+    public void ArrangeNode(Point position) 
+    {
+        Arrange(new Rect(position, DesiredSize));
+        ArrangeChildren(new Point(position.X, position.Y + ActualHeight + 30));
+    }
+
+    protected abstract void ArrangeChildren(Point position);
+
+    public double CalculateWidth(Graph graph)
+    {
+        double min = double.MaxValue;
+        double max = double.MinValue;
+
+        EnumerateAllChildren((node) => 
+        {
+            double leftX = node.GetLeftPositionRelativeTo(graph).X;
+            double rightX = node.GetRightPositionRelativeTo(graph).X;
+
+            if (rightX > max)
+            {
+                max = rightX;
+            }
+
+            if (leftX < min)
+            {
+                min = leftX;
+            }
+        });
+
+        if (min == double.MaxValue || max == double.MinValue)
+        {
+            return 0;
+        }
+
+        return max - min;
+    }
 }

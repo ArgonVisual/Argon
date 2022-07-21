@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace ScriptingDemo;
 
@@ -36,5 +37,14 @@ public class NodeCollection : Collection<Node>
         }
 
         base.ClearItems();
+    }
+
+    public void Arrange(Point position) 
+    {
+        foreach (Node node in this)
+        {
+            node.ArrangeNode(position);
+            position.Y += 200;
+        }
     }
 }

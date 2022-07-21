@@ -22,10 +22,19 @@ public class Graph : Border
         grid.Children.Add(NodePanel = new NodePanel(this));
 
         RootNode rootNode = new RootNode(this);
-        BranchNode branchNode = new BranchNode();
+        BranchNode topBranchNode = new BranchNode();
 
-        branchNode.TrueNodes.Add(new BranchNode());
-        rootNode.Nodes.Add(branchNode);
+        BranchNode rightBranchNode = new BranchNode();
+        rightBranchNode.FalseNodes.Add(new BranchNode());
+        rightBranchNode.TrueNodes.Add(new BranchNode());
+
+        BranchNode leftBranchNode = new BranchNode();
+        leftBranchNode.TrueNodes.Add(new BranchNode());
+
+        topBranchNode.TrueNodes.Add(rightBranchNode);
+        topBranchNode.FalseNodes.Add(leftBranchNode);
+
+        rootNode.Nodes.Add(topBranchNode);
 
         NodePanel.Children.Add(rootNode);
         RootNode = rootNode;

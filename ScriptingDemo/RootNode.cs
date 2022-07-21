@@ -50,4 +50,9 @@ public class RootNode : Node
             action(node);
         }
     }
+
+    protected override void ArrangeChildren(Point position)
+    {
+        Nodes.Arrange(position);
+    }
 }

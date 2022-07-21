@@ -98,6 +98,16 @@ public static class WidgetHelper
             return FindParent<T>(parentObject);
     }
 
+    public static Point GetLeftPositionRelativeTo(this UIElement child, UIElement parent)
+    {
+        return child.TransformToAncestor(parent).Transform(new Point(0, child.RenderSize.Height / 2));
+    }
+
+    public static Point GetRightPositionRelativeTo(this UIElement child, UIElement parent)
+    {
+        return child.TransformToAncestor(parent).Transform(new Point(child.RenderSize.Width, child.RenderSize.Height / 2));
+    }
+
     public static Point GetCenterPositionRelativeTo(this UIElement child, UIElement parent) 
     {
         return child.TransformToAncestor(parent).Transform(new Point(child.RenderSize.Width / 2, child.RenderSize.Height / 2));

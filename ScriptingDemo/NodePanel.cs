@@ -5,7 +5,6 @@ namespace ScriptingDemo;
 
 public class NodePanel : Panel
 {
-    public Point ScreenOffset { get; set; }
     public Graph Graph { get; }
 
     public NodePanel(Graph graph)
@@ -31,18 +30,9 @@ public class NodePanel : Panel
 
     protected override Size ArrangeOverride(Size finalSize)
     {
-        Node currentNode = Graph.RootNode;
-        Point currentPosition = new Point(600, 100);
-        Graph.RootNode.Arrange(new Rect(new Point(currentPosition.X + ScreenOffset.X, currentPosition.Y + ScreenOffset.Y), Graph.RootNode.DesiredSize));
-
-        currentNode.EnumerateAllChildren((node) => 
-        {
-            currentPosition.Y += _incrementSize;
-            node.Arrange(new Rect(new Point(currentPosition.X + ScreenOffset.X, currentPosition.Y + ScreenOffset.Y), node.DesiredSize));
-        });
+        Point currentPosition = new Point(500, 100);
+        Graph.RootNode.ArrangeNode(currentPosition);
 
         return finalSize; // Returns the final Arranged size
     }
-
-    private const double _incrementSize = 100;
 }

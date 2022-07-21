@@ -68,4 +68,27 @@ public class BranchNode : Node
             action(trueNode);
         }
     }
+
+    protected override void ArrangeChildren(Point position)
+    {
+        if (FalseNodes.Count >= 1 && ParentGraph != null)
+        {
+            double falseWidth = 0;
+            if (TrueNodes.Count >= 1)
+            {
+                falseWidth = FalseNodes[0].CalculateWidth(ParentGraph);
+            }
+            FalseNodes.Arrange(new Point(position.X - falseWidth, position.Y));
+        }
+
+        if (TrueNodes.Count >= 1 && ParentGraph != null)
+        {
+            double trueWidth = 0;
+            if (FalseNodes.Count >= 1)
+            {
+                trueWidth = TrueNodes[0].CalculateWidth(ParentGraph);
+            }
+            TrueNodes.Arrange(new Point(position.X + trueWidth, position.Y));
+        }
+    }
 }
